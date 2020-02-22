@@ -1,30 +1,28 @@
-#include <Servo.h> //Die Servobibliothek wird aufgerufen.
+#include <Arduino.h>;
+#include <Servo.h>;
 
-Servo servoblau;
+#define LED D7
+#define SERVO D4
 
-int incoming;
+Servo motor;
 
-// Erstellt für das Programm ein Servo mit dem Namen
-// „servoblau“
-void setup()
-{
+void setup() {
     Serial.begin(9600);
-    servoblau.attach(8); // Servo wird mit Pin8 verbunden
+    motor.attach(SERVO);
+    pinMode(LED, OUTPUT);
 }
 
-void loop()
-{
-    if (Serial.available() > 0)
-    {
-        incoming = Serial.parseInt();
+void loop() {
+    digitalWrite(LED, LOW);
+    motor.write(180);
+    delay(2000);
+
+    digitalWrite(LED, HIGH);
+    motor.write(90);
+    delay(2000);
+
+    if (Serial.available() > 0) {
+        int incoming = Serial.parseInt();
         Serial.println(incoming);
-        if (incoming == 5)
-        {
-            Serial.println(incoming);
-            servoblau.write(170);
-            delay(2000);
-            servoblau.write(90);
-        }
     }
-    delay(100);
 }
