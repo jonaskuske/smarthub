@@ -35,19 +35,19 @@ app.post('/emit', (req, res) => {
   }
 });
 
-function handleSmarthubConnection(client) {
-  log(`Smarthub connected! (${client.id})`);
+function handleSmarthubConnection(smarthub) {
+  log(`Smarthub connected! (${smarthub.id})`);
 
-  client.on(EVENT_TYPES.TURN_KETTLE_ON, () => {
+  smarthub.on(EVENT_TYPES.TURN_KETTLE_ON, () => {
     log(`Received "${EVENT_TYPES.TURN_KETTLE_ON}" from hub, emitting to controller.`);
     io.to(CONTROLLER_ROOM).emit(EVENT_TYPES.TURN_KETTLE_ON);
   });
 }
 
-function handleControllerConnection(client) {
-  log(`Controller connected! (${client.id})`);
+function handleControllerConnection(controller) {
+  log(`Controller connected! (${controller.id})`);
 
-  client.on(EVENT_TYPES.TURN_KETTLE_ON_SUCCESS, () => {
+  controller.on(EVENT_TYPES.TURN_KETTLE_ON_SUCCESS, () => {
     log(`Received ${EVENT_TYPES.TURN_KETTLE_ON_SUCCESS} from controller, emitting to smarthub.`);
     smarthubNamespace.emit(EVENT_TYPES.TURN_KETTLE_ON_SUCCESS);
   });
