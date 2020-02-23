@@ -16,7 +16,13 @@ DistanceController einbruchSensor(TRIGGER_PIN, ECHO_PIN);
 IRrecv irrecv(IR_RECEIVER);
 decode_results ir_results;
 
+// Countdown stiller Alarm
+unsigned long startTime;
+unsigned long stopTime;
+
+int buttonState = 0;
 bool einbruchTriggered = false;
+bool alarmLaut = false;
 #define einbruchCode 16724175
 
 void makeStatusGreen() {
@@ -85,19 +91,32 @@ void loop() {
     long distance = einbruchSensor.getCurrentDistance();
 
     if (distance <= 10 && !einbruchTriggered) {
-        Serial.println("Alaaaaarm! Einbruch!");
-        Serial.println(distance);
+        Serial.println("Stiller Alarm ausgelöst. Countdown läuft.");
+        startTime = millis();
+        stopTime = startTime + 5000;
         einbruchTriggered = true;
-        socketClient.emit(ALARM_TRIGGERED);
     }
 
-    if (einbruchTriggered) {
-        // LED ALARM
+    if (millis() >= stopTime && einbruchTriggered) {
+        if (!alarmLaut) {
+            Serial.println("Timer abgelaufen. Stiller Alarm wird laut & an Server gesendet.");
+            socketClient.emit(ALARM_TRIGGERED);
+            alarmLaut = true;
+        }
         digitalWrite(EINBRUCH_LED, HIGH);
         delay(100);
         digitalWrite(EINBRUCH_LED, LOW);
         delay(100);
-    } else if (!einbruchTriggered) {
+    }
+
+    // if (einbruchTriggered) {
+    //     // LED ALARM
+    //     digitalWrite(EINBRUCH_LED, HIGH);
+    //     delay(100);
+    //     digitalWrite(EINBRUCH_LED, LOW);
+    //     delay(100);
+    // } else
+    if (!einbruchTriggered) {
         digitalWrite(EINBRUCH_LED, LOW);
     }
 
@@ -106,9 +125,10 @@ void loop() {
         // Wenn auf IR Remote 1 gedrückt wird, Alarm ausschalten
         if (ir_results.value == einbruchCode) {
             einbruchTriggered = false;
-            Serial.println("Einbruch ausgeschaltet");
-            socketClient.emit(ALARM_DISABLED);
-            // Event Einbruch abgeschaltet an Server senden
+            Serial.println("Alarm ausgeschaltet");
+            if (alarmLaut) {
+                socketClient.emit(ALARM_DISABLED);
+            }
         }
         irrecv.resume();
     }
