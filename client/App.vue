@@ -31,6 +31,7 @@
     </main>
     <p>Kettle Status: {{ kettleStatus }}</p>
     <button type="button" @click="turnOn">Turn Kettle on</button>
+    <button type="button" @click="turnOffAlarm">Turn Alarm off</button>
   </div>
 </template>
 
@@ -51,10 +52,22 @@ export default {
   }),
   created() {
     socketClient.on(EVENT_TYPES.TURN_KETTLE_ON_SUCCESS, this.handleSuccess)
+    socketClient.on(EVENT_TYPES.SYS_STARTED, () => {
+      this.currentTime = 'System gestartet'
+    })
+    socketClient.on(EVENT_TYPES.ALARM_TRIGGERED, () => {
+      this.currentTime = 'ALAAAAAARM! EINBRUCH!'
+    })
+    socketClient.on(EVENT_TYPES.ALARM_DISABLED, () => {
+      this.currentTime = 'Okay. Alarm ist wieder aus.'
+    })
   },
   methods: {
     turnOn() {
       socketClient.emit(EVENT_TYPES.TURN_KETTLE_ON)
+    },
+    turnOffAlarm() {
+      socketClient.emit(EVENT_TYPES.DISABLE_ALARM)
     },
     handleSuccess() {
       this.kettleStatus = 'on'

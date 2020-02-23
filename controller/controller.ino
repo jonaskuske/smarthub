@@ -56,6 +56,20 @@ void handleDisconnect(const char *payload, size_t length) {
     makeStatusRed();
 }
 
+void handleDisableEvent(const char *payload, size_t length) {
+    disableAlarm();
+}
+
+void disableAlarm() {
+    einbruchTriggered = false;
+    Serial.println("Alarm ausgeschaltet");
+    if (alarmLaut) {
+        socketClient.emit(ALARM_DISABLED);
+    }
+    systemAn = false;
+    alarmLaut = false;
+}
+
 void setup() {
     Serial.begin(115200);
 
@@ -86,9 +100,10 @@ void setup() {
     socketClient.on("connect", handleConnect);
     socketClient.on("disconnect", handleDisconnect);
     socketClient.on(TURN_KETTLE_ON, turnKettleOn);
+    socketClient.on(DISABLE_ALARM, handleDisableEvent);
 
     Serial.println("Connecting to Server...");
-    socketClient.begin(SOCKET_SERVER_ADDRESS);
+    socketClient.begin(SOCKET_SERVER_ADDRESS, SOCKET_SERVER_PORT);
 }
 
 void loop() {
@@ -126,12 +141,7 @@ void loop() {
     if (irrecv.decode(&ir_results)) {
         // Wenn auf IR Remote 1 gedrückt wird, Alarm ausschalten
         if (ir_results.value == einbruchCode) {
-            einbruchTriggered = false;
-            Serial.println("Alarm ausgeschaltet");
-            if (alarmLaut) {
-                socketClient.emit(ALARM_DISABLED);
-            }
-            systemAn = false;
+            disableAlarm();
         }
 
         if (ir_results.value == systemCode && !systemAn) {
