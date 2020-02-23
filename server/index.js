@@ -70,6 +70,13 @@ function handleControllerConnection(controller) {
     );
     smarthubNamespace.emit(EVENT_TYPES.ALARM_TRIGGERED);
   });
+
+  controller.on(EVENT_TYPES.ALARM_DISABLED, () => {
+    log(
+      `Received ${EVENT_TYPES.ALARM_DISABLED} from controller, emitting to smarthub.`
+    );
+    smarthubNamespace.emit(EVENT_TYPES.ALARM_DISABLED);
+  });
 }
 
 smarthubNamespace.on("connection", handleSmarthubConnection);

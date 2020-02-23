@@ -89,7 +89,6 @@ void loop() {
         Serial.println(distance);
         einbruchTriggered = true;
         socketClient.emit(ALARM_TRIGGERED);
-        // EVENT AN SERVER SENDEN HIER !
     }
 
     if (einbruchTriggered) {
@@ -108,6 +107,7 @@ void loop() {
         if (ir_results.value == einbruchCode) {
             einbruchTriggered = false;
             Serial.println("Einbruch ausgeschaltet");
+            socketClient.emit(ALARM_DISABLED);
             // Event Einbruch abgeschaltet an Server senden
         }
         irrecv.resume();
