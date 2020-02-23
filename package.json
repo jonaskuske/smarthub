@@ -6,6 +6,7 @@
   "private": true,
   "scripts": {
     "start": "node -r esm server/index.js",
+    "server:dev": "nodemon -r esm server/index.js",
     "client:dev": "parcel serve client/index.html -d client/dist",
     "client:build": "parcel build client/index.html -d client/dist --log-level 2"
   },
