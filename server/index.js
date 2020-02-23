@@ -38,6 +38,8 @@ app.post('/emit', (req, res) => {
 function handleSmarthubConnection(smarthub) {
   log(`Smarthub connected! (${smarthub.id})`);
 
+  smarthub.on('disconnect', () => console.log(`Smarthub disconnected! (${smarthub.id})`));
+
   smarthub.on(EVENT_TYPES.TURN_KETTLE_ON, () => {
     log(`Received "${EVENT_TYPES.TURN_KETTLE_ON}" from hub, emitting to controller.`);
     io.to(CONTROLLER_ROOM).emit(EVENT_TYPES.TURN_KETTLE_ON);
@@ -46,6 +48,8 @@ function handleSmarthubConnection(smarthub) {
 
 function handleControllerConnection(controller) {
   log(`Controller connected! (${controller.id})`);
+
+  controller.on('disconnect', () => console.log(`Controller disconnected! (${controller.id})`));
 
   controller.on(EVENT_TYPES.TURN_KETTLE_ON_SUCCESS, () => {
     log(`Received ${EVENT_TYPES.TURN_KETTLE_ON_SUCCESS} from controller, emitting to smarthub.`);
