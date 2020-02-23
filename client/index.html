@@ -13,7 +13,7 @@
         visibility: hidden;
       }
       [v-cloak]::before {
-        content: 'Wird geladen...';
+        content: "Wird geladen...";
         visibility: visible;
       }
     </style>
@@ -21,28 +21,28 @@
 
   <body>
     <div id="app" v-cloak>
-      <p>LED Status: {{ ledStatus }}</p>
-      <button type="button" @click="turnOn">Turn LED on</button>
+      <p>Kettle Status: {{ kettleStatus }}</p>
+      <button type="button" @click="turnOn">Turn Kettle on</button>
     </div>
 
     <script>
-      const socketClient = io('http://smarthub.jonaskuske.de/smarthub');
+      const socketClient = io("http://smarthub.jonaskuske.de/smarthub");
 
       const vm = new Vue({
-        el: '#app',
-        data: { ledStatus: 'off' },
+        el: "#app",
+        data: { kettleStatus: "off" },
         methods: {
           turnOn() {
-            socketClient.emit('TURN_LED_ON');
-          },
-        },
+            socketClient.emit("TURN_KETTLE_ON");
+          }
+        }
       });
 
       function handleSuccess() {
-        vm.ledStatus = 'on';
+        vm.kettleStatus = "on";
       }
 
-      socketClient.on('TURN_LED_ON_SUCCESS', handleSuccess);
+      socketClient.on("TURN_KETTLE_ON_SUCCESS", handleSuccess);
     </script>
   </body>
 </html>
