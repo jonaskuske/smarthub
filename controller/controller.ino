@@ -19,11 +19,17 @@ decode_results ir_results;
 // Countdown stiller Alarm
 unsigned long startTime;
 unsigned long stopTime;
+unsigned long startTime_System;
+unsigned long stopTime_System;
 
 int buttonState = 0;
 bool einbruchTriggered = false;
 bool alarmLaut = false;
+bool systemAn = false;
+bool countdown = false;
+long distance = 50;
 #define einbruchCode 16724175
+#define systemCode 16718055
 
 void makeStatusGreen() {
     analogWrite(STATUS_LED_GREEN, 255);
@@ -88,10 +94,13 @@ void setup() {
 void loop() {
     socketClient.loop();
 
-    long distance = einbruchSensor.getCurrentDistance();
+    if (systemAn) {
+        distance = einbruchSensor.getCurrentDistance();
+    }
 
     if (distance <= 10 && !einbruchTriggered) {
         Serial.println("Stiller Alarm ausgelöst. Countdown läuft.");
+        Serial.println(distance);
         startTime = millis();
         stopTime = startTime + 5000;
         einbruchTriggered = true;
@@ -109,13 +118,6 @@ void loop() {
         delay(100);
     }
 
-    // if (einbruchTriggered) {
-    //     // LED ALARM
-    //     digitalWrite(EINBRUCH_LED, HIGH);
-    //     delay(100);
-    //     digitalWrite(EINBRUCH_LED, LOW);
-    //     delay(100);
-    // } else
     if (!einbruchTriggered) {
         digitalWrite(EINBRUCH_LED, LOW);
     }
@@ -129,7 +131,24 @@ void loop() {
             if (alarmLaut) {
                 socketClient.emit(ALARM_DISABLED);
             }
+            systemAn = false;
         }
+
+        if (ir_results.value == systemCode && !systemAn) {
+            // wenn Counter abgelaufen
+            Serial.println("Countdown für System-Start gestartet");
+            startTime_System = millis();
+            stopTime_System = startTime_System + 3000;
+            countdown = true;
+        }
+
         irrecv.resume();
+    }
+
+    if (millis() >= stopTime_System && countdown && !systemAn) {
+        systemAn = true;
+        socketClient.emit(SYS_STARTED);
+        Serial.println("System gestartet & Systemstart an Server gemeldet");
+        countdown = false;
     }
 }
