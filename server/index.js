@@ -8,7 +8,7 @@ import * as EVENT_TYPES from '../shared/event-types';
 const PORT = Number(process.env.PORT) || 3030;
 const CONTROLLER_ROOM = 'controller';
 
-const noop = () => {};
+const noop = () => { };
 const log = process.env.NODE_ENV === 'production' ? noop : console.log;
 
 const app = express();
@@ -48,7 +48,7 @@ function handleControllerConnection(client) {
   log(`Controller connected! (${client.id})`);
 
   client.on(EVENT_TYPES.TURN_KETTLE_ON_SUCCESS, () => {
-    log(`Received ${EVENT_TYPES.TURN_LED_ON_SUCCESS} from controller, emitting to smarthub.`);
+    log(`Received ${EVENT_TYPES.TURN_KETTLE_ON_SUCCESS} from controller, emitting to smarthub.`);
     smarthubNamespace.emit(EVENT_TYPES.TURN_KETTLE_ON_SUCCESS);
   });
 }
