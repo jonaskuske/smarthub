@@ -4,45 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Smart Hub</title>
-
-    <script src="//unpkg.com/vue"></script>
-    <script src="//unpkg.com/socket.io-client/dist/socket.io.js"></script>
-
-    <style>
-      [v-cloak] > * {
-        visibility: hidden;
-      }
-      [v-cloak]::before {
-        content: 'Wird geladen...';
-        visibility: visible;
-      }
-    </style>
+    <link rel="icon" href="./assets/icons/favicon-16x16.png" />
+    <link rel="stylesheet" href="./index.css" />
   </head>
 
   <body>
-    <div id="app" v-cloak>
-      <p>Kettle Status: {{ kettleStatus }}</p>
-      <button type="button" @click="turnOn">Turn Kettle on</button>
-    </div>
-
-    <script>
-      const socketClient = io('http://smarthub.jonaskuske.de/smarthub');
-
-      const vm = new Vue({
-        el: '#app',
-        data: { kettleStatus: 'off' },
-        methods: {
-          turnOn() {
-            socketClient.emit('TURN_KETTLE_ON');
-          },
-        },
-      });
-
-      function handleSuccess() {
-        vm.kettleStatus = 'on';
-      }
-
-      socketClient.on('TURN_KETTLE_ON_SUCCESS', handleSuccess);
-    </script>
+    <div id="root"></div>
+    <script src="./index.js"></script>
   </body>
 </html>

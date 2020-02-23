@@ -34,7 +34,8 @@
 # stuff
 .DS_Store
 node_modules
-/dist
+dist
+.cache
 
 # local env files
 .env.local

@@ -1,16 +1,79 @@
 {
-  "name": "sm4rth0m3",
+  "name": "smarthub",
   "version": "1.0.0",
   "main": "server/index.js",
   "license": "UNLICENSED",
   "private": true,
   "scripts": {
-    "start": "node -r esm server/index.js"
+    "start": "node -r esm server/index.js",
+    "client:dev": "parcel serve client/index.html -d client/dist",
+    "client:build": "parcel build client/index.html -d client/dist --log-level 2"
   },
   "dependencies": {
     "body-parser": "^1.19.0",
     "esm": "^3.2.25",
     "express": "^4.17.1",
-    "socket.io": "^2.3.0"
+    "socket.io": "^2.3.0",
+    "socket.io-client": "^2.3.0",
+    "vue": "^2.6.11",
+    "vue-hot-reload-api": "^2.3.4",
+    "vue-router": "^3.1.5"
+  },
+  "devDependencies": {
+    "@fullhuman/postcss-purgecss": "^2.0.6",
+    "@vue/component-compiler-utils": "^3.1.1",
+    "autoprefixer": "^9.7.4",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.10.0",
+    "eslint-plugin-prettier": "^3.1.2",
+    "eslint-plugin-vue": "^6.2.1",
+    "lint-staged": "^10.0.7",
+    "parcel-bundler": "^1.12.4",
+    "parcel-plugin-clean-dist": "0.0.6",
+    "parcel-plugin-static-files-copy": "^2.3.1",
+    "postcss-import": "^12.0.1",
+    "prettier": "^1.19.1",
+    "tailwindcss": "^1.2.0",
+    "tailwindcss-aspect-ratio": "^3.0.0",
+    "tailwindcss-interaction-variants": "^3.1.0",
+    "tailwindcss-pseudo-elements": "^1.1.2",
+    "vue-template-compiler": "^2.6.11",
+    "yorkie": "^2.0.0"
+  },
+  "lint-staged": {
+    "*.js": [
+      "eslint --fix"
+    ],
+    "*.{json,css,vue,webmanifest,md,html}": [
+      "prettier --write"
+    ]
+  },
+  "prettier": {
+    "semi": false,
+    "singleQuote": true,
+    "trailingComma": "all",
+    "printWidth": 120,
+    "tabWidth": 2
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true,
+      "browser": true,
+      "serviceworker": true,
+      "es6": true
+    },
+    "extends": [
+      "eslint:recommended",
+      "plugin:vue/recommended",
+      "plugin:prettier/recommended",
+      "prettier/vue"
+    ]
+  },
+  "posthtml": {
+    "recognizeSelfClosing": true
+  },
+  "staticFiles": {
+    "staticPath": "client/static"
   }
 }
