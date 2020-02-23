@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smart Hub</title>
+
+    <script src="//unpkg.com/vue"></script>
+    <script src="//unpkg.com/socket.io-client/dist/socket.io.js"></script>
+
+    <style>
+      [v-cloak] > * {
+        visibility: hidden;
+      }
+      [v-cloak]::before {
+        content: 'Wird geladen...';
+        visibility: visible;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="app" v-cloak>
+      <p>LED Status: {{ ledStatus }}</p>
+      <button type="button" @click="turnOn">Turn LED on</button>
+    </div>
+
+    <script>
+      const socketClient = io('http://smarthub.jonaskuske.de/smarthub');
+
+      const vm = new Vue({
+        el: '#app',
+        data: { ledStatus: 'off' },
+        methods: {
+          turnOn() {
+            socketClient.emit('TURN_LED_ON');
+          },
+        },
+      });
+
+      function handleSuccess() {
+        vm.ledStatus = 'on';
+      }
+
+      socketClient.on('TURN_LED_ON_SUCCESS', handleSuccess);
+    </script>
+  </body>
+</html>
