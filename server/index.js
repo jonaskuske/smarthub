@@ -18,7 +18,7 @@ const io = socketIo(server);
 const smarthubSocket = io.of('/smarthub');
 
 app.get('/', (req, res) => {
-  res.sendFile(path.resolve('../client/index.html'));
+  res.sendFile(path.resolve(__dirname, '../client/index.html'));
 });
 
 app.post('/led', (req, res) => {
