@@ -7,8 +7,6 @@ const log = console.log;
 const PORT = Number(process.env.PORT) || 3030;
 
 const EVENT_TYPES = {
-  // TURN_LED_ON: 'TURN_LED_ON',
-  // TURN_LED_ON_SUCCESS: 'TURN_LED_ON_SUCCESS',
   TURN_KETTLE_ON: "TURN_KETTLE_ON",
   TURN_KETTLE_ON_SUCCESS: "TURN_KETTLE_ON_SUCCESS"
 };
