@@ -13,7 +13,7 @@
         visibility: hidden;
       }
       [v-cloak]::before {
-        content: "Wird geladen...";
+        content: 'Wird geladen...';
         visibility: visible;
       }
     </style>
@@ -26,23 +26,23 @@
     </div>
 
     <script>
-      const socketClient = io("http://smarthub.jonaskuske.de/smarthub");
+      const socketClient = io('http://smarthub.jonaskuske.de/smarthub');
 
       const vm = new Vue({
-        el: "#app",
-        data: { kettleStatus: "off" },
+        el: '#app',
+        data: { kettleStatus: 'off' },
         methods: {
           turnOn() {
-            socketClient.emit("TURN_KETTLE_ON");
-          }
-        }
+            socketClient.emit('TURN_KETTLE_ON');
+          },
+        },
       });
 
       function handleSuccess() {
-        vm.kettleStatus = "on";
+        vm.kettleStatus = 'on';
       }
 
-      socketClient.on("TURN_KETTLE_ON_SUCCESS", handleSuccess);
+      socketClient.on('TURN_KETTLE_ON_SUCCESS', handleSuccess);
     </script>
   </body>
 </html>

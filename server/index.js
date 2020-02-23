@@ -1,47 +1,63 @@
-const path = require("path");
-const http = require("http");
-const express = require("express");
-const socketIo = require("socket.io");
-const log = console.log;
+import path from 'path';
+import http from 'http';
+import express from 'express';
+import bodyParser from 'body-parser';
+import socketIo from 'socket.io';
+import * as EVENT_TYPES from '../shared/event-types';
 
 const PORT = Number(process.env.PORT) || 3030;
+const CONTROLLER_ROOM = 'controller';
 
-const EVENT_TYPES = {
-  TURN_KETTLE_ON: "TURN_KETTLE_ON",
-  TURN_KETTLE_ON_SUCCESS: "TURN_KETTLE_ON_SUCCESS"
-};
+const noop = () => {};
+const log = process.env.NODE_ENV === 'production' ? noop : console.log;
 
 const app = express();
 const server = http.createServer(app);
 
 const io = socketIo(server);
-const smarthubSocket = io.of("/smarthub");
+const smarthubNamespace = io.of('/smarthub');
 
-app.get("/", (req, res) => {
-  res.sendFile(path.resolve(__dirname, "../client/index.html"));
+app.use(bodyParser.json());
+
+app.get('/', (req, res) => {
+  res.sendFile(path.resolve(__dirname, '../client/index.html'));
 });
 
-app.post("/led", (req, res) => {
-  log(`Received "${EVENT_TYPES.TURN_KETTLE_ON}" from HTTP endpoint!`);
-  io.clients().emit(EVENT_TYPES.TURN_KETTLE_ON);
-  res.send("ok");
+app.post('/emit', (req, res) => {
+  const { body } = req;
+
+  if (Object.values(EVENT_TYPES).includes(body.EVENT)) {
+    log(`POST /emit: Received "${body.EVENT}", emitting to controller`);
+    io.to(CONTROLLER_ROOM).emit(body.EVENT);
+    res.send('OK');
+  } else {
+    throw Error(`POST /emit: Received unknown event "${body.EVENT}"`);
+  }
 });
 
-smarthubSocket.on("connection", client => {
-  log(`Smarthub client connected! (${client.id})`);
+function handleSmarthubConnection(client) {
+  log(`Smarthub connected! (${client.id})`);
 
   client.on(EVENT_TYPES.TURN_KETTLE_ON, () => {
-    log(`Received "${EVENT_TYPES.TURN_KETTLE_ON}" from smarthub!`);
-    io.clients().emit(EVENT_TYPES.TURN_KETTLE_ON);
+    log(`Received "${EVENT_TYPES.TURN_KETTLE_ON}" from hub, emitting to controller.`);
+    io.to(CONTROLLER_ROOM).emit(EVENT_TYPES.TURN_KETTLE_ON);
   });
-});
+}
 
-io.on("connection", client => {
-  log(`Generic client connected! (${client.id})`);
+function handleControllerConnection(client) {
+  log(`Controller connected! (${client.id})`);
 
   client.on(EVENT_TYPES.TURN_KETTLE_ON_SUCCESS, () => {
-    smarthubSocket.clients().emit(EVENT_TYPES.TURN_KETTLE_ON_SUCCESS);
-    log("The LED is now on!");
+    log(`Received ${EVENT_TYPES.TURN_LED_ON_SUCCESS} from controller, emitting to smarthub.`);
+    smarthubNamespace.emit(EVENT_TYPES.TURN_KETTLE_ON_SUCCESS);
+  });
+}
+
+smarthubNamespace.on('connection', handleSmarthubConnection);
+
+io.on('connection', client => {
+  client.on(EVENT_TYPES.REGISTER_CONTROLLER, () => {
+    client.join(CONTROLLER_ROOM, () => handleControllerConnection(client));
   });
 });
 

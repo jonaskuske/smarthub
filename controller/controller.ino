@@ -6,8 +6,16 @@
 #include "config.h"
 
 SocketIoClient socketClient;
-
 Servo motor;
+
+void makeStatusGreen() {
+    analogWrite(STATUS_LED_GREEN, 255);
+    analogWrite(STATUS_LED_RED, 0);
+}
+void makeStatusRed() {
+    analogWrite(STATUS_LED_GREEN, 0);
+    analogWrite(STATUS_LED_RED, 255);
+}
 
 void turnKettleOn(const char *payload, size_t length) {
     motor.write(90);
@@ -16,27 +24,24 @@ void turnKettleOn(const char *payload, size_t length) {
     socketClient.emit(TURN_KETTLE_ON_SUCCESS);
 }
 
-void connectedLED(const char *payload, size_t length) {
-    Serial.println("Connected. Green");
-    analogWrite(LED_RED, 0);
-    analogWrite(LED_GREEN, 255);
+void handleConnect(const char *payload, size_t length) {
+    socketClient.emit(REGISTER_CONTROLLER);
+    makeStatusGreen();
 }
 
-void disconnectedLED(const char *payload, size_t length) {
-    Serial.println("Disonnected. RED");
-    analogWrite(LED_GREEN, 0);
-    analogWrite(LED_RED, 255);
+void handleDisconnect(const char *payload, size_t length) {
+    makeStatusRed();
 }
 
 void setup() {
     Serial.begin(115200);
 
-    pinMode(LED_RED, OUTPUT);
-    pinMode(LED_GREEN, OUTPUT);
-    pinMode(LED_BLUE, OUTPUT);
-    motor.attach(SERVO_PIN);
+    pinMode(STATUS_LED_RED, OUTPUT);
+    pinMode(STATUS_LED_GREEN, OUTPUT);
+    pinMode(STATUS_LED_BLUE, OUTPUT);
 
-    analogWrite(LED_RED, 255);
+    motor.attach(SERVO_PIN);
+    makeStatusRed();
 
     Serial.println("Connecting WiFi...");
     WiFi.mode(WIFI_STA);
@@ -51,13 +56,12 @@ void setup() {
     Serial.println("WiFi connected.");
 
     // Attach socket event handlers
+    socketClient.on("connect", handleConnect);
+    socketClient.on("disconnect", handleDisconnect);
     socketClient.on(TURN_KETTLE_ON, turnKettleOn);
-    socketClient.on("connect", connectedLED);
-    socketClient.on("disconnect", disconnectedLED);
+
     Serial.println("Connecting to Server...");
     socketClient.begin(SOCKET_SERVER_ADDRESS);
-
-    Serial.println("Controller is ready.");
 }
 
 void loop() {
