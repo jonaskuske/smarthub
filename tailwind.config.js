@@ -22,7 +22,7 @@ module.exports = {
       fontSize: {
         base: '14px',
       },
-      colors: { primary: '#6CAEFC', lightgray: '#868686', lightblue: '#78AFF5' },
+      colors: { primary: '#6CAEFC', lightgray: '#868686', lightblue: '#6CAEFC' },
       zIndex: { '-1': '-1' },
       inset: { '1/2': '50%' },
     },
