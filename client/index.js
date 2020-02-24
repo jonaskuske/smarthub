@@ -1,4 +1,9 @@
 import Vue from 'vue'
+import router from './router'
+import IconPlugin from './components/icons/IconPlugin'
+import './index.css'
 import App from './App.vue'
 
-new Vue({ el: '#root', render: create => create(App) })
+Vue.use(IconPlugin)
+
+new Vue({ el: '#root', router, render: create => create(App) })

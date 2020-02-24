@@ -1,5 +1,11 @@
+const { fontFamily } = require('tailwindcss/defaultTheme')
+
 module.exports = {
   theme: {
+    fontFamily: {
+      ...fontFamily,
+      sans: ['Raleway', ...fontFamily.sans],
+    },
     container: { center: true, padding: '1.5rem' },
     aspectRatio: {
       '1/1': [1, 1],
@@ -10,7 +16,13 @@ module.exports = {
       '21/9': [21, 9],
     },
     extend: {
-      color: { primary: { default: '#6CAEFC' }, gray: { default: '#868686' } },
+      borderRadius: {
+        xl: '12px',
+      },
+      fontSize: {
+        base: '14px',
+      },
+      colors: { primary: '#6CAEFC', lightgray: '#868686', lightblue: '#78AFF5' },
       zIndex: { '-1': '-1' },
       inset: { '1/2': '50%' },
     },
