@@ -74,9 +74,7 @@ void handleDisableEvent(const char *payload, size_t length) {
 void disableAlarm() {
     einbruchTriggered = false;
     Serial.println("Alarm ausgeschaltet");
-    if (alarmLaut) {
-        socketClient.emit(ALARM_DISABLED);
-    }
+    socketClient.emit(ALARM_DISABLED);
     systemAn = false;
     alarmLaut = false;
 }
