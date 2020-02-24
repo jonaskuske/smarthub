@@ -41,15 +41,14 @@ long distance = 50;
 #define systemCode 16718055
 
 #define DHTTYPE DHT11
-DHT dht(THERMO, DHTTYPE);
+DHT dht_raum(THERMO, DHTTYPE);
+DHT dht_wasser(THERMO_WASSER, DHTTYPE);
 
-void makeStatusGreen() {
-    analogWrite(STATUS_LED_GREEN, 255);
-    analogWrite(STATUS_LED_RED, 0);
+void makeStatusOn() {
+    digitalWrite(STATUS_LED, HIGH);
 }
-void makeStatusRed() {
-    analogWrite(STATUS_LED_GREEN, 0);
-    analogWrite(STATUS_LED_RED, 255);
+void makeStatusOff() {
+    digitalWrite(STATUS_LED, LOW);
 }
 
 void turnKettleOn(const char *payload, size_t length) {
@@ -61,11 +60,11 @@ void turnKettleOn(const char *payload, size_t length) {
 
 void handleConnect(const char *payload, size_t length) {
     socketClient.emit(REGISTER_CONTROLLER);
-    makeStatusGreen();
+    makeStatusOn();
 }
 
 void handleDisconnect(const char *payload, size_t length) {
-    makeStatusRed();
+    makeStatusOff();
 }
 
 void handleDisableEvent(const char *payload, size_t length) {
@@ -96,18 +95,17 @@ void startSys() {
 void setup() {
     Serial.begin(115200);
 
-    pinMode(STATUS_LED_RED, OUTPUT);
-    pinMode(STATUS_LED_GREEN, OUTPUT);
-    pinMode(STATUS_LED_BLUE, OUTPUT);
+    pinMode(STATUS_LED, OUTPUT);
     pinMode(EINBRUCH_LED, OUTPUT);
     irrecv.enableIRIn();
 
     motor.attach(SERVO_PIN);
-    makeStatusRed();
+    makeStatusOff();
     digitalWrite(EINBRUCH_LED, LOW);
     motor.write(0);
 
-    dht.begin();
+    dht_raum.begin();
+    dht_wasser.begin();
 
     Serial.println("Connecting WiFi...");
     WiFi.mode(WIFI_STA);
@@ -171,7 +169,7 @@ void loop() {
         }
 
         if (ir_results.value == systemCode && !systemAn) {
-            // wenn Counter abgelaufen
+            // Wenn auf IR Remote 2 gedrückt wird, System-Start-Countdown starten
             Serial.println("Countdown für System-Start gestartet");
             startTime_System = millis();
             stopTime_System = startTime_System + 3000;
@@ -185,27 +183,37 @@ void loop() {
         startSys();
     }
 
-    Vo = analogRead(THERMO_TEST);
-    R2 = R1 * (1023.0 / (float)Vo - 1.0);
-    logR2 = log(R2);
-    T = (1.0 / (c1 + c2 * logR2 + c3 * logR2 * logR2 * logR2));
-    T = T - 273.15;
-
-    delay(500);
-
     if (!tempCountdown) {
         startTempTime = millis();
         stopTempTime = startTempTime + 5000;
         tempCountdown = true;
     }
-    if (millis() >= stopTempTime) {
-        char result[8];
-        dtostrf(T, 6, 2, result);
-        socketClient.emit(TEMPERATUR, result);
-        Serial.println(result);
-        Serial.print("Temperature: ");
-        Serial.print(T);
-        Serial.println(" C");
+    if (millis() >= stopTempTime && tempCountdown) {
+        // Wassertemperatur über DHT für HUB auslesen & übermitteln
+        float temp_wasser = dht_wasser.readTemperature();
+        char result_wasser[8];
+        dtostrf(temp_wasser, 6, 2, result_wasser);
+        socketClient.emit(TEMPERATUR_WASSER, result_wasser);
+        Serial.print("Temperatur: ");
+        Serial.print(temp_wasser);
+        Serial.println(" Grad Celsius");
+
+        // Luftfeuchtigkeit & Temperatur für HUB auslesen & übermitteln
+        float luft = dht_raum.readHumidity();
+        float temp = dht_raum.readTemperature();
+        char result_temp[8];
+        dtostrf(temp, 6, 2, result_temp);
+        socketClient.emit(TEMPERATUR, result_temp);
+        char result_hum[8];
+        dtostrf(luft, 6, 2, result_hum);
+        socketClient.emit(HUMIDITY, result_hum);
+        Serial.print("Luftfeuchtigkeit: ");
+        Serial.print(luft);
+        Serial.println(" %");
+        Serial.print("Temperatur: ");
+        Serial.print(temp);
+        Serial.println(" Grad Celsius");
+
         tempCountdown = false;
     }
 }

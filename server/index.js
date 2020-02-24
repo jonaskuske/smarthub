@@ -86,6 +86,16 @@ function handleControllerConnection(controller) {
     log(`Received ${EVENT_TYPES.TEMPERATUR} from controller, emitting to smarthub.`)
     smarthubNamespace.emit(EVENT_TYPES.TEMPERATUR, { temp })
   })
+
+  controller.on(EVENT_TYPES.HUMIDITY, hum => {
+    log(`Received ${EVENT_TYPES.HUMIDITY} from controller, emitting to smarthub.`)
+    smarthubNamespace.emit(EVENT_TYPES.HUMIDITY, { hum })
+  })
+
+  controller.on(EVENT_TYPES.TEMPERATUR_WASSER, temp_wasser => {
+    log(`Received ${EVENT_TYPES.TEMPERATUR_WASSER} from controller, emitting to smarthub.`)
+    smarthubNamespace.emit(EVENT_TYPES.TEMPERATUR_WASSER, { temp_wasser })
+  })
 }
 
 smarthubNamespace.on('connection', handleSmarthubConnection)
