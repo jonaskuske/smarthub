@@ -50,6 +50,11 @@ function handleSmarthubConnection(smarthub) {
     log(`Received "${EVENT_TYPES.DISABLE_ALARM}" from hub, emitting to controller.`)
     io.to(CONTROLLER_ROOM).emit(EVENT_TYPES.DISABLE_ALARM)
   })
+
+  smarthub.on(EVENT_TYPES.START_SYS, () => {
+    log(`Received "${EVENT_TYPES.START_SYS}" from hub, emitting to controller.`)
+    io.to(CONTROLLER_ROOM).emit(EVENT_TYPES.START_SYS)
+  })
 }
 
 function handleControllerConnection(controller) {
@@ -75,6 +80,11 @@ function handleControllerConnection(controller) {
   controller.on(EVENT_TYPES.SYS_STARTED, () => {
     log(`Received ${EVENT_TYPES.SYS_STARTED} from controller, emitting to smarthub.`)
     smarthubNamespace.emit(EVENT_TYPES.SYS_STARTED)
+  })
+
+  controller.on(EVENT_TYPES.TEMPERATUR, () => {
+    log(`Received ${EVENT_TYPES.TEMPERATUR} from controller, emitting to smarthub.`)
+    smarthubNamespace.emit(EVENT_TYPES.TEMPERATUR)
   })
 }
 
