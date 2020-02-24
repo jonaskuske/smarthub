@@ -6,14 +6,14 @@
       <label for="notifications">
         Geräte-Benachrichtigungen
       </label>
-      <input id="notifications" type="checkbox" />
+      <ToggleButton id="notifications" />
     </div>
 
     <div class="flex justify-between items-baseline border-b mb-8">
-      <label>
+      <label for="name">
         Name
       </label>
-      <span @click="changeName">{{ name }}</span>
+      <input v-model="name" class="text-right focus:outline-none" type="text" />
     </div>
 
     <footer class="flex justify-center mt-auto p-4">
@@ -24,19 +24,19 @@
 
 <script>
 import BackButton from '../components/BackButton'
+import ToggleButton from '../components/ToggleButton'
 import { getName, updateName } from '../utils'
 
 export default {
-  components: { BackButton },
+  components: { BackButton, ToggleButton },
   computed: {
-    name() {
-      return getName()
-    },
-  },
-  methods: {
-    changeName() {
-      const next = prompt('Name?', this.name)
-      if (next) updateName(next)
+    name: {
+      get() {
+        return getName()
+      },
+      set(nextName) {
+        updateName(nextName)
+      },
     },
   },
 }

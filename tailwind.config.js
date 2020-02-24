@@ -16,15 +16,12 @@ module.exports = {
       '21/9': [21, 9],
     },
     extend: {
-      borderRadius: {
-        xl: '12px',
-      },
-      fontSize: {
-        base: '14px',
-      },
+      borderRadius: { xl: '12px' },
       colors: { primary: '#6CAEFC', lightgray: '#868686', lightblue: '#6CAEFC' },
-      zIndex: { '-1': '-1' },
+      fontSize: { base: '14px' },
       inset: { '1/2': '50%' },
+      scale: { '70': '.7' },
+      zIndex: { '-1': '-1' },
     },
   },
   variants: {

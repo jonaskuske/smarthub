@@ -9,6 +9,8 @@ const dateTimeFormatter = new Intl.DateTimeFormat('de-DE', {
   year: 'numeric',
 })
 
+export const wait = time => new Promise(resolve => setTimeout(resolve, time))
+
 export const formatTime = (time = new Date()) => dateTimeFormatter.format(time)
 
 export const DEFAULT_NAME = 'Erdling'

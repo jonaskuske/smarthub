@@ -1,5 +1,12 @@
 @import './assets/styles/fonts.css';
 
 @tailwind base;
+
+*,
+::before,
+::after {
+  -webkit-tap-highlight-color: transparent;
+}
+
 @tailwind components;
 @tailwind utilities;

@@ -20,10 +20,6 @@ const smarthubNamespace = io.of('/smarthub')
 
 app.use(bodyParser.json())
 
-// app.get('/', (req, res) => {
-//   res.sendFile(path.resolve(__dirname, '../client/index.html'))
-// })
-
 app.post('/emit', (req, res) => {
   const { body } = req
 
@@ -39,7 +35,7 @@ app.post('/emit', (req, res) => {
 function handleSmarthubConnection(smarthub) {
   log(`Smarthub connected! (${smarthub.id})`)
 
-  smarthub.on('disconnect', () => console.log(`Smarthub disconnected! (${smarthub.id})`))
+  smarthub.on('disconnect', () => log(`Smarthub disconnected! (${smarthub.id})`))
 
   smarthub.on(EVENT_TYPES.TURN_KETTLE_ON, () => {
     log(`Received "${EVENT_TYPES.TURN_KETTLE_ON}" from hub, emitting to controller.`)
@@ -58,9 +54,13 @@ function handleSmarthubConnection(smarthub) {
 }
 
 function handleControllerConnection(controller) {
+  smarthubNamespace.emit(EVENT_TYPES.CONTROLLER_CONNECTED)
   log(`Controller connected! (${controller.id})`)
 
-  controller.on('disconnect', () => console.log(`Controller disconnected! (${controller.id})`))
+  controller.on('disconnect', () => {
+    smarthubNamespace.emit(EVENT_TYPES.CONTROLLER_DISCONNECTED)
+    log(`Controller disconnected! (${controller.id})`)
+  })
 
   controller.on(EVENT_TYPES.TURN_KETTLE_ON_SUCCESS, () => {
     log(`Received ${EVENT_TYPES.TURN_KETTLE_ON_SUCCESS} from controller, emitting to smarthub.`)
