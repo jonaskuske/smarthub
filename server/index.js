@@ -82,9 +82,9 @@ function handleControllerConnection(controller) {
     smarthubNamespace.emit(EVENT_TYPES.SYS_STARTED)
   })
 
-  controller.on(EVENT_TYPES.TEMPERATUR, () => {
+  controller.on(EVENT_TYPES.TEMPERATUR, temp => {
     log(`Received ${EVENT_TYPES.TEMPERATUR} from controller, emitting to smarthub.`)
-    smarthubNamespace.emit(EVENT_TYPES.TEMPERATUR)
+    smarthubNamespace.emit(EVENT_TYPES.TEMPERATUR, { temp })
   })
 }
 
