@@ -17,11 +17,7 @@ DistanceController einbruchSensor(TRIGGER_PIN, ECHO_PIN);
 IRrecv irrecv(IR_RECEIVER);
 decode_results ir_results;
 
-int Vo;
-float R1 = 10000;
-float logR2, R2, T;
-float c1 = 1.009249522e-03, c2 = 2.378405444e-04, c3 = 2.019202697e-07;
-
+// Variablen Deklaration
 unsigned long startTime;
 unsigned long stopTime;
 unsigned long startTime_System;
@@ -40,6 +36,7 @@ bool tempCountdown = false;
 bool kettleCountdown = false;
 long distance = 50;
 
+// IR Tasten-Codes
 #define einbruchCode 16724175
 #define systemCode 16718055
 
@@ -47,6 +44,7 @@ long distance = 50;
 DHT dht_raum(THERMO, DHTTYPE);
 DHT dht_wasser(THERMO_WASSER, DHTTYPE);
 
+// Funktionen
 void makeStatusOn() {
     digitalWrite(STATUS_LED, HIGH);
 }
@@ -58,8 +56,6 @@ void turnKettleOn(const char *payload, size_t length) {
     motor.write(90);
     delay(1000);
     motor.write(0);
-    // char kettleState[8];
-    // dtostrf(true, 6, 2, kettleState);
     socketClient.emit(UPDATE_KETTLE_ACTIVE_STATE, "true");
     startKettleTime = millis();
     stopKettleTime = startKettleTime + 105000;
@@ -82,8 +78,6 @@ void handleDisableEvent(const char *payload, size_t length) {
 void disableAlarm() {
     einbruchTriggered = false;
     Serial.println("Alarm ausgeschaltet");
-    // char alarmStateDisabled[8];
-    // dtostrf("disabled", 6, 2, alarmStateDisabled);
     socketClient.emit(UPDATE_ALARM_STATE, "\"disabled\"");
     systemAn = false;
     alarmLaut = false;
@@ -97,24 +91,85 @@ void handleStartEvent(const char *payload, size_t length) {
 void startSys() {
     systemAn = true;
     countdown = false;
-    // char alarmStateEnabled[8];
-    // dtostrf("enabled", 6, 2, alarmStateEnabled);
     socketClient.emit(UPDATE_ALARM_STATE, "\"enabled\"");
     Serial.println("System gestartet & Systemstart an Server gemeldet");
 }
 
+void stillerAlarm() {
+    Serial.println("Stiller Alarm ausgelöst. Countdown läuft.");
+    Serial.println(distance);
+    startTime = millis();
+    stopTime = startTime + 5000;
+    einbruchTriggered = true;
+}
+
+void lauterAlarm() {
+    if (!alarmLaut) {
+        Serial.println("Timer abgelaufen. Stiller Alarm wird laut & an Server gesendet.");
+        socketClient.emit(UPDATE_ALARM_STATE, "\"ringing\"");
+        alarmLaut = true;
+    }
+    digitalWrite(EINBRUCH_LED, HIGH);
+    delay(100);
+    digitalWrite(EINBRUCH_LED, LOW);
+    delay(100);
+}
+
+void startAlarmCountdown() {
+    Serial.println("Countdown für Alarmanlagen-Start gestartet");
+    startTime_System = millis();
+    stopTime_System = startTime_System + 3000;
+    countdown = true;
+}
+
+void kettleTemp() {
+    // Wassertemperatur über DHT für HUB auslesen & übermitteln
+    float temp_wasser = dht_wasser.readTemperature();
+    char result_wasser[8];
+    dtostrf(temp_wasser, 6, 2, result_wasser);
+    socketClient.emit(UPDATE_KETTLE_TEMP, result_wasser);
+    Serial.print("Wasser-Temperatur: ");
+    Serial.print(temp_wasser);
+    Serial.println(" Grad Celsius");
+}
+
+void roomTemp() {
+    // Luftfeuchtigkeit & Temperatur für HUB auslesen & übermitteln
+    float luft = dht_raum.readHumidity();
+    float temp = dht_raum.readTemperature();
+    char result_temp[8];
+    dtostrf(temp, 6, 2, result_temp);
+    socketClient.emit(UPDATE_ROOM_TEMP, result_temp);
+    char result_hum[8];
+    dtostrf(luft, 6, 2, result_hum);
+    socketClient.emit(UPDATE_ROOM_HUMIDITY, result_hum);
+    Serial.print("Luftfeuchtigkeit: ");
+    Serial.print(luft);
+    Serial.println(" %");
+    Serial.print("Temperatur: ");
+    Serial.print(temp);
+    Serial.println(" Grad Celsius");
+}
+
+void kettleState() {
+    socketClient.emit(UPDATE_KETTLE_ACTIVE_STATE, "false");
+    Serial.println("Kettle aus");
+    kettleCountdown = false;
+}
+
+// Setup
 void setup() {
     Serial.begin(115200);
 
     pinMode(STATUS_LED, OUTPUT);
     pinMode(EINBRUCH_LED, OUTPUT);
-    irrecv.enableIRIn();
-
-    motor.attach(SERVO_PIN);
-    makeStatusOff();
     digitalWrite(EINBRUCH_LED, LOW);
+
+    irrecv.enableIRIn();
+    motor.attach(SERVO_PIN);
     motor.write(0);
 
+    makeStatusOff();
     noTone(BUZZER);
 
     dht_raum.begin();
@@ -124,7 +179,7 @@ void setup() {
     WiFi.mode(WIFI_STA);
     WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 
-    // Wait until WiFi is connected
+    // Warten, bis WiFi verbunden ist
     while (WiFi.status() != WL_CONNECTED) {
         delay(200);
         Serial.print(".");
@@ -132,7 +187,7 @@ void setup() {
 
     Serial.println("WiFi connected.");
 
-    // Attach socket event handlers
+    // Socket Event Handlers
     socketClient.on("connect", handleConnect);
     socketClient.on("disconnect", handleDisconnect);
     socketClient.on(ACTION_KETTLE_TURN_ON, turnKettleOn);
@@ -143,108 +198,75 @@ void setup() {
     socketClient.begin(SOCKET_SERVER_ADDRESS, SOCKET_SERVER_PORT);
 }
 
+// Loop
 void loop() {
     socketClient.loop();
 
+    // Ultraschall-Sensor einschalten
     if (systemAn) {
         distance = einbruchSensor.getCurrentDistance();
     }
 
+    // Bei Aktivität stillen Alarm auslösen
     if (distance <= 10 && !einbruchTriggered) {
-        Serial.println("Stiller Alarm ausgelöst. Countdown läuft.");
-        Serial.println(distance);
-        startTime = millis();
-        stopTime = startTime + 5000;
-        einbruchTriggered = true;
+        stillerAlarm();
     }
 
+    // Nach 5 Sek stiller Alarm -> lauter Alarm + Nachricht an Server
     if (millis() >= stopTime && einbruchTriggered) {
-        if (!alarmLaut) {
-            Serial.println("Timer abgelaufen. Stiller Alarm wird laut & an Server gesendet.");
-            // char alarmStateRinging[8];
-            // dtostrf("ringing", 6, 2, alarmStateRinging);
-            socketClient.emit(UPDATE_ALARM_STATE, "\"ringing\"");
-            alarmLaut = true;
-        }
-        digitalWrite(EINBRUCH_LED, HIGH);
-        delay(100);
-        digitalWrite(EINBRUCH_LED, LOW);
-        delay(100);
+        lauterAlarm();
     }
 
+    // Bei Alarm Buzzer einschalten
     if (alarmLaut) {
         tone(BUZZER, 900);
     } else {
         noTone(BUZZER);
     }
 
+    // Nach Beenden des Alarms LED & Buzzer deaktivieren
     if (!einbruchTriggered) {
         digitalWrite(EINBRUCH_LED, LOW);
         noTone(BUZZER);
     }
 
-    // IR FERNBEDIENUNG CODE AUSLESEN (ZUM ABSCHALTEN DES ALARMS)
+    // IR Fernbedienung Eingaben auslesen & verarbeiten
     if (irrecv.decode(&ir_results)) {
         // Wenn auf IR Remote 1 gedrückt wird, Alarm ausschalten
         if (ir_results.value == einbruchCode) {
             disableAlarm();
         }
 
+        // Wenn auf IR Remote 2 gedrückt wird, Alarmanlagen-Start-Countdown starten
         if (ir_results.value == systemCode && !systemAn) {
-            // Wenn auf IR Remote 2 gedrückt wird, System-Start-Countdown starten
-            Serial.println("Countdown für System-Start gestartet");
-            startTime_System = millis();
-            stopTime_System = startTime_System + 3000;
-            countdown = true;
+            startAlarmCountdown();
         }
 
         irrecv.resume();
     }
 
+    // Wenn Start-Timer abgelaufen ist, Alarmanlage aktivieren
     if (millis() >= stopTime_System && countdown && !systemAn) {
         startSys();
     }
 
+    // Temperatur Countdown starten
     if (!tempCountdown) {
         startTempTime = millis();
         stopTempTime = startTempTime + 5000;
         tempCountdown = true;
     }
+
+    // Nach Ablauf des Countdown (alle 5 Sek.) Temperaturen auslesen & übermitteln
+    // Danach Countdown zurücksetzen
     if (millis() >= stopTempTime && tempCountdown) {
-        // Wassertemperatur über DHT für HUB auslesen & übermitteln
-        float temp_wasser = dht_wasser.readTemperature();
-        char result_wasser[8];
-        dtostrf(temp_wasser, 6, 2, result_wasser);
-        socketClient.emit(UPDATE_KETTLE_TEMP, result_wasser);
-        Serial.print("Wasser-Temperatur: ");
-        Serial.print(temp_wasser);
-        Serial.println(" Grad Celsius");
-
-        // Luftfeuchtigkeit & Temperatur für HUB auslesen & übermitteln
-        float luft = dht_raum.readHumidity();
-        float temp = dht_raum.readTemperature();
-        char result_temp[8];
-        dtostrf(temp, 6, 2, result_temp);
-        socketClient.emit(UPDATE_ROOM_TEMP, result_temp);
-        char result_hum[8];
-        dtostrf(luft, 6, 2, result_hum);
-        socketClient.emit(UPDATE_ROOM_HUMIDITY, result_hum);
-        Serial.print("Luftfeuchtigkeit: ");
-        Serial.print(luft);
-        Serial.println(" %");
-        Serial.print("Temperatur: ");
-        Serial.print(temp);
-        Serial.println(" Grad Celsius");
-
+        kettleTemp();
+        roomTemp();
         tempCountdown = false;
     }
 
+    // Nachdem Countdown abgelaufen ist (Wasser kocht), State an Server senden
     if (millis() >= stopKettleTime && kettleCountdown) {
-        // char kettleState[8];
-        //dtostrf(false, 6, 2, kettleState);
-        socketClient.emit(UPDATE_KETTLE_ACTIVE_STATE, "false");
-        Serial.println("Kettle aus");
-        kettleCountdown = false;
+        kettleState();
     }
-    // Kettle Status auf False nach 95 Sek.
 }
