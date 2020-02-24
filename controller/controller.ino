@@ -77,6 +77,7 @@ void disableAlarm() {
     socketClient.emit(ALARM_DISABLED);
     systemAn = false;
     alarmLaut = false;
+    distance = 50;
 }
 
 void handleStartEvent(const char *payload, size_t length) {
@@ -101,6 +102,8 @@ void setup() {
     makeStatusOff();
     digitalWrite(EINBRUCH_LED, LOW);
     motor.write(0);
+
+    noTone(BUZZER);
 
     dht_raum.begin();
     dht_wasser.begin();
@@ -155,8 +158,15 @@ void loop() {
         delay(100);
     }
 
+    if (alarmLaut) {
+        tone(BUZZER, 900);
+    } else {
+        noTone(BUZZER);
+    }
+
     if (!einbruchTriggered) {
         digitalWrite(EINBRUCH_LED, LOW);
+        noTone(BUZZER);
     }
 
     // IR FERNBEDIENUNG CODE AUSLESEN (ZUM ABSCHALTEN DES ALARMS)
@@ -192,7 +202,7 @@ void loop() {
         char result_wasser[8];
         dtostrf(temp_wasser, 6, 2, result_wasser);
         socketClient.emit(TEMPERATUR_WASSER, result_wasser);
-        Serial.print("Temperatur: ");
+        Serial.print("Wasser-Temperatur: ");
         Serial.print(temp_wasser);
         Serial.println(" Grad Celsius");
 
