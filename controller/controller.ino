@@ -28,6 +28,8 @@ unsigned long startTime_System;
 unsigned long stopTime_System;
 unsigned long startTempTime;
 unsigned long stopTempTime;
+unsigned long startKettleTime;
+unsigned long stopKettleTime;
 
 int buttonState = 0;
 bool einbruchTriggered = false;
@@ -35,6 +37,7 @@ bool alarmLaut = false;
 bool systemAn = false;
 bool countdown = false;
 bool tempCountdown = false;
+bool kettleCountdown = false;
 long distance = 50;
 
 #define einbruchCode 16724175
@@ -55,7 +58,12 @@ void turnKettleOn(const char *payload, size_t length) {
     motor.write(90);
     delay(1000);
     motor.write(0);
-    socketClient.emit(TURN_KETTLE_ON_SUCCESS);
+    // char kettleState[8];
+    // dtostrf(true, 6, 2, kettleState);
+    socketClient.emit(UPDATE_KETTLE_ACTIVE_STATE, "true");
+    startKettleTime = millis();
+    stopKettleTime = startKettleTime + 105000;
+    kettleCountdown = true;
 }
 
 void handleConnect(const char *payload, size_t length) {
@@ -74,7 +82,9 @@ void handleDisableEvent(const char *payload, size_t length) {
 void disableAlarm() {
     einbruchTriggered = false;
     Serial.println("Alarm ausgeschaltet");
-    socketClient.emit(ALARM_DISABLED);
+    // char alarmStateDisabled[8];
+    // dtostrf("disabled", 6, 2, alarmStateDisabled);
+    socketClient.emit(UPDATE_ALARM_STATE, "\"disabled\"");
     systemAn = false;
     alarmLaut = false;
     distance = 50;
@@ -87,7 +97,9 @@ void handleStartEvent(const char *payload, size_t length) {
 void startSys() {
     systemAn = true;
     countdown = false;
-    socketClient.emit(SYS_STARTED);
+    // char alarmStateEnabled[8];
+    // dtostrf("enabled", 6, 2, alarmStateEnabled);
+    socketClient.emit(UPDATE_ALARM_STATE, "\"enabled\"");
     Serial.println("System gestartet & Systemstart an Server gemeldet");
 }
 
@@ -123,9 +135,9 @@ void setup() {
     // Attach socket event handlers
     socketClient.on("connect", handleConnect);
     socketClient.on("disconnect", handleDisconnect);
-    socketClient.on(TURN_KETTLE_ON, turnKettleOn);
-    socketClient.on(DISABLE_ALARM, handleDisableEvent);
-    socketClient.on(START_SYS, handleStartEvent);
+    socketClient.on(ACTION_KETTLE_TURN_ON, turnKettleOn);
+    socketClient.on(ACTION_ALARM_DISABLE, handleDisableEvent);
+    socketClient.on(ACTION_ALARM_ENABLE, handleStartEvent);
 
     Serial.println("Connecting to Server...");
     socketClient.begin(SOCKET_SERVER_ADDRESS, SOCKET_SERVER_PORT);
@@ -149,7 +161,9 @@ void loop() {
     if (millis() >= stopTime && einbruchTriggered) {
         if (!alarmLaut) {
             Serial.println("Timer abgelaufen. Stiller Alarm wird laut & an Server gesendet.");
-            socketClient.emit(ALARM_TRIGGERED);
+            // char alarmStateRinging[8];
+            // dtostrf("ringing", 6, 2, alarmStateRinging);
+            socketClient.emit(UPDATE_ALARM_STATE, "\"ringing\"");
             alarmLaut = true;
         }
         digitalWrite(EINBRUCH_LED, HIGH);
@@ -201,7 +215,7 @@ void loop() {
         float temp_wasser = dht_wasser.readTemperature();
         char result_wasser[8];
         dtostrf(temp_wasser, 6, 2, result_wasser);
-        socketClient.emit(TEMPERATUR_WASSER, result_wasser);
+        socketClient.emit(UPDATE_KETTLE_TEMP, result_wasser);
         Serial.print("Wasser-Temperatur: ");
         Serial.print(temp_wasser);
         Serial.println(" Grad Celsius");
@@ -211,10 +225,10 @@ void loop() {
         float temp = dht_raum.readTemperature();
         char result_temp[8];
         dtostrf(temp, 6, 2, result_temp);
-        socketClient.emit(TEMPERATUR, result_temp);
+        socketClient.emit(UPDATE_ROOM_TEMP, result_temp);
         char result_hum[8];
         dtostrf(luft, 6, 2, result_hum);
-        socketClient.emit(HUMIDITY, result_hum);
+        socketClient.emit(UPDATE_ROOM_HUMIDITY, result_hum);
         Serial.print("Luftfeuchtigkeit: ");
         Serial.print(luft);
         Serial.println(" %");
@@ -224,4 +238,13 @@ void loop() {
 
         tempCountdown = false;
     }
+
+    if (millis() >= stopKettleTime && kettleCountdown) {
+        // char kettleState[8];
+        //dtostrf(false, 6, 2, kettleState);
+        socketClient.emit(UPDATE_KETTLE_ACTIVE_STATE, "false");
+        Serial.println("Kettle aus");
+        kettleCountdown = false;
+    }
+    // Kettle Status auf False nach 95 Sek.
 }
