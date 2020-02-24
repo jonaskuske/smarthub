@@ -1,6 +1,6 @@
 <template>
   <label class="relative inline-block" style="width: 30px; height: 18px;">
-    <input class="invisible" type="checkbox" v-bind="$attrs" />
+    <input class="invisible" type="checkbox" v-bind="$attrs" v-on="$listeners" />
     <span
       class="slider round absolute cursor-pointer inset-0 rounded-full duration-300 transition bg-gray-400"
     />

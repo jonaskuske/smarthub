@@ -17,13 +17,13 @@
       </p>
 
       <div class="font-bold flex text-xl">
-        <div class="mr-8">
+        <div class="transition-opacity duration-500 ease-in mr-8" :class="{ 'opacity-0': !temp }">
           <Sun class="inline" />
-          26°C
+          {{ temp }}°C
         </div>
-        <div>
+        <div class="transition-opacity duration-500 ease-in" :class="{ 'opacity-0': !humidity }">
           <Wind class="inline" />
-          64.2%
+          {{ humidity }}%
         </div>
       </div>
     </div>
@@ -31,13 +31,30 @@
 </template>
 
 <script>
-import { formatTime, getName } from '../utils'
+import { formatTime, getName, socketClient } from '../utils'
+import * as EVENTS from '../../shared/event-types'
 
 export default {
-  data: () => ({ currentTime: formatTime() }),
+  data: () => ({ currentTime: formatTime(), temp: undefined, humidity: undefined }),
   computed: {
     name() {
       return getName()
+    },
+  },
+  created() {
+    socketClient.on(EVENTS.TEMPERATUR, this.updateTemp)
+    socketClient.on(EVENTS.HUMIDITY, this.updateHumidity)
+  },
+  beforeDestroy() {
+    socketClient.off(EVENTS.TEMPERATUR, this.updateTemp)
+    socketClient.off(EVENTS.HUMIDITY, this.updateHumidity)
+  },
+  methods: {
+    updateTemp(data) {
+      this.temp = data.temp
+    },
+    updateHumidity(data) {
+      this.humidity = data.hum
     },
   },
 }
