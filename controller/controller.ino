@@ -30,10 +30,12 @@ unsigned long stopKettleTime;
 int buttonState = 0;
 bool einbruchTriggered = false;
 bool alarmLaut = false;
+bool alarmTriggered = false;
 bool systemAn = false;
 bool countdown = false;
 bool tempCountdown = false;
 bool kettleCountdown = false;
+bool silentMode = false;
 long distance = 50;
 
 // IR Tasten-Codes
@@ -75,12 +77,23 @@ void handleDisableEvent(const char *payload, size_t length) {
     disableAlarm();
 }
 
+void handleEnableSilent(const char *payload, size_t length) {
+    silentMode = true;
+    socketClient.emit(UPDATE_ALARM_SILENT_MODE_STATE, "true");
+}
+
+void handleDisableSilent(const char *payload, size_t length) {
+    silentMode = false;
+    socketClient.emit(UPDATE_ALARM_SILENT_MODE_STATE, "false");
+}
+
 void disableAlarm() {
     einbruchTriggered = false;
     Serial.println("Alarm ausgeschaltet");
     socketClient.emit(UPDATE_ALARM_STATE, "\"disabled\"");
     systemAn = false;
     alarmLaut = false;
+    alarmTriggered = false;
     distance = 50;
 }
 
@@ -95,24 +108,29 @@ void startSys() {
     Serial.println("System gestartet & Systemstart an Server gemeldet");
 }
 
-void stillerAlarm() {
-    Serial.println("Stiller Alarm ausgelöst. Countdown läuft.");
+void alarmCountdown() {
+    Serial.println("Countdown vor Alarm läuft.");
     Serial.println(distance);
     startTime = millis();
     stopTime = startTime + 5000;
     einbruchTriggered = true;
 }
 
-void lauterAlarm() {
-    if (!alarmLaut) {
+void alarmTrigger() {
+    if (!alarmTriggered) {
         Serial.println("Timer abgelaufen. Stiller Alarm wird laut & an Server gesendet.");
         socketClient.emit(UPDATE_ALARM_STATE, "\"ringing\"");
-        alarmLaut = true;
+        if (!silentMode) {
+            alarmLaut = true;
+        }
+        alarmTriggered = true;
     }
-    digitalWrite(EINBRUCH_LED, HIGH);
-    delay(100);
-    digitalWrite(EINBRUCH_LED, LOW);
-    delay(100);
+    if (!silentMode) {
+        digitalWrite(EINBRUCH_LED, HIGH);
+        delay(100);
+        digitalWrite(EINBRUCH_LED, LOW);
+        delay(100);
+    }
 }
 
 void startAlarmCountdown() {
@@ -193,6 +211,8 @@ void setup() {
     socketClient.on(ACTION_KETTLE_TURN_ON, turnKettleOn);
     socketClient.on(ACTION_ALARM_DISABLE, handleDisableEvent);
     socketClient.on(ACTION_ALARM_ENABLE, handleStartEvent);
+    socketClient.on(ACTION_ALARM_ENABLE_SILENT_MODE, handleEnableSilent);
+    socketClient.on(ACTION_ALARM_DISABLE_SILENT_MODE, handleDisableSilent);
 
     Serial.println("Connecting to Server...");
     socketClient.begin(SOCKET_SERVER_ADDRESS, SOCKET_SERVER_PORT);
@@ -207,14 +227,14 @@ void loop() {
         distance = einbruchSensor.getCurrentDistance();
     }
 
-    // Bei Aktivität stillen Alarm auslösen
+    // Bei Aktivität Alarm-Countdown auslösen
     if (distance <= 10 && !einbruchTriggered) {
-        stillerAlarm();
+        alarmCountdown();
     }
 
     // Nach 5 Sek stiller Alarm -> lauter Alarm + Nachricht an Server
     if (millis() >= stopTime && einbruchTriggered) {
-        lauterAlarm();
+        alarmTrigger();
     }
 
     // Bei Alarm Buzzer einschalten
