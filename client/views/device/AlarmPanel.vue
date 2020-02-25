@@ -4,7 +4,12 @@
 
     <div class="flex justify-between w-full border-b pb-4 mb-4">
       <label for="alarm_enabled">Einbruchschutz</label>
-      <ToggleButton id="alarm_enabled" :checked="isEnabled" @change="handleStateChange" />
+      <ToggleButton
+        id="alarm_enabled"
+        :disabled="!isOnline"
+        :checked="isEnabled"
+        @change="handleStateChange"
+      />
     </div>
 
     <div class="flex justify-between w-full border-b pb-4 mb-4">
@@ -20,6 +25,7 @@
       <label for="silent_mode">Stiller Alarm</label>
       <ToggleButton
         id="silent_mode"
+        :disabled="!isOnline"
         :checked="device.data.silentMode"
         @change="handleSilentModeChange"
       />
@@ -28,7 +34,10 @@
     <div class="flex justify-between w-full border-b pb-4 mb-4">
       <label for="show_password">Passwort zeigen</label>
       <button id="show_password" class="focus:outline-none" @click="showCode = !showCode">
-        {{ showCode ? 'Taste 1' : '********' }}
+        <span v-if="!isOnline" class="lowercase">Nicht verfügbar</span>
+        <span v-else :class="{ blur: !showCode }">
+          Taste 1
+        </span>
       </button>
     </div>
   </div>
@@ -36,7 +45,7 @@
 
 <script>
 import ToggleButton from '../../components/ToggleButton'
-import { emit } from '../../utils/socket'
+import { emit, state } from '../../utils/socket'
 import { ACTIONS } from '../../../shared/event-types'
 
 export default {
@@ -49,6 +58,10 @@ export default {
     /** @returns { boolean } */
     isEnabled() {
       return ['enabled', 'ringing'].includes(this.device.data.state)
+    },
+    /** @returns { boolean } */
+    isOnline() {
+      return state.controller.online
     },
   },
   methods: {
@@ -64,3 +77,9 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.blur {
+  filter: blur(4px);
+}
+</style>

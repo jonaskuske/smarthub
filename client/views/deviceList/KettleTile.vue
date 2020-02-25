@@ -1,7 +1,7 @@
 <template>
   <router-link tag="div" :to="`/devices/${device.name}`" class="cursor-default">
-    <BaseTile :device="device" :status="isActive ? 'In Betrieb' : 'Bereit'">
-      <IconButton :disabled="isActive" @click="turnOn">
+    <BaseTile :device="device" :status="statusMessage">
+      <IconButton :disabled="isActive || !isOnline" @click="turnOn">
         <span class="sr-only">Einschalten</span>
         <PowerOff class="pointer-events-none" />
       </IconButton>
@@ -12,7 +12,7 @@
 <script>
 import IconButton from '../../components/IconButton'
 import BaseTile from './_BaseTile'
-import { emit } from '../../utils/socket'
+import { emit, state } from '../../utils/socket'
 import { ACTIONS } from '../../../shared/event-types'
 
 export default {
@@ -24,6 +24,15 @@ export default {
     /** @returns { boolean } */
     isActive() {
       return this.device.data.active
+    },
+    /** @returns { boolean } */
+    isOnline() {
+      return state.controller.online
+    },
+    /** @returns {string} */
+    statusMessage() {
+      if (!this.isOnline) return 'Nicht erreichbar'
+      return this.isActive ? 'In Betrieb' : 'Bereit'
     },
   },
   methods: {

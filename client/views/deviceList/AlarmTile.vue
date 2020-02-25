@@ -1,7 +1,7 @@
 <template>
   <router-link :to="`/devices/${device.name}`" class="cursor-default">
-    <BaseTile :device="device" :status="isEnabled ? 'Aktiviert' : 'Deaktiviert'">
-      <ToggleButton :checked="isEnabled" @change="handleChange" />
+    <BaseTile :device="device" :status="statusMessage">
+      <ToggleButton :checked="isEnabled" :disabled="!isOnline" @change="handleChange" />
     </BaseTile>
   </router-link>
 </template>
@@ -9,7 +9,7 @@
 <script>
 import BaseTile from './_BaseTile'
 import ToggleButton from '../../components/ToggleButton.vue'
-import { emit } from '../../utils/socket'
+import { emit, state } from '../../utils/socket'
 import { ACTIONS } from '../../../shared/event-types'
 
 export default {
@@ -22,6 +22,15 @@ export default {
     isEnabled() {
       const state = this.device.data.state
       return ['enabled', 'ringing'].includes(state)
+    },
+    /** @returns { boolean } */
+    isOnline() {
+      return state.controller.online
+    },
+    /** @returns {string} */
+    statusMessage() {
+      if (!this.isOnline) return 'Nicht erreichbar'
+      return this.isEnabled ? 'Aktiviert' : 'Deaktiviert'
     },
   },
   methods: {

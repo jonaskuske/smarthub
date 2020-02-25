@@ -25,7 +25,10 @@ export default {
   transition: inherit;
   border-radius: 50%;
 }
-
+input:disabled + .slider {
+  @apply opacity-50;
+  filter: grayscale(1);
+}
 input:checked + .slider {
   @apply bg-lightblue;
 }

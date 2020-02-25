@@ -3,14 +3,14 @@
     <h1 class="font-bold text-2xl text-center mb-2">{{ device.name }}</h1>
 
     <div class="w-10/12 relative">
-      <CircleChart :value="timerPercent" style="color: #FF7272" />
+      <CircleChart :value="isOnline ? timerPercent : 0" style="color: #FF7272" />
       <div class="absolute flex justify-between" style="top: 68%; left: 9%; right: 9%">
         <span class="absolute left-0 transform -translate-x-1/2">{{ startTemp.toFixed() }}°C</span>
         <span class="absolute right-0 transform translate-x-1/2">100°C</span>
       </div>
       <IconButton
         class="absolute top-0 left-1/2 transform -translate-x-1/2 w-full h-full scale-70"
-        :disabled="isActive"
+        :disabled="isActive || !isOnline"
         @click="turnOn"
       >
         <PowerOff class="transform scale-150" />
@@ -50,8 +50,13 @@ export default {
     isActive() {
       return this.device.data.active
     },
-    /** @returns {string} */
+    /** @returns { boolean } */
+    isOnline() {
+      return state.controller.online
+    },
+    /** @returns { string } */
     statusMessage() {
+      if (!this.isOnline) return 'Nicht erreichbar'
       return this.isActive ? 'In Betrieb' : 'Bereit'
     },
   },
