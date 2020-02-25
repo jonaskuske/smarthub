@@ -1,4 +1,4 @@
-@import './assets/styles/fonts.css';
+@import './fonts.css';
 
 @tailwind base;
 
@@ -10,3 +10,9 @@
 
 @tailwind components;
 @tailwind utilities;
+
+@variants disabled {
+  .grayscale {
+    filter: grayscale(1);
+  }
+}

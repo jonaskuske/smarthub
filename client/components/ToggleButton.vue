@@ -7,6 +7,12 @@
   </label>
 </template>
 
+<script>
+export default {
+  inheritAttrs: false,
+}
+</script>
+
 <style scoped>
 .slider:before {
   position: absolute;

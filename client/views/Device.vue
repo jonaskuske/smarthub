@@ -18,19 +18,22 @@
     </main>
 
     <footer class="flex justify-center mt-auto p-4">
-      <BackButton />
+      <PrimaryButton as="router-link" to="/">
+        Zurück zur Geräteliste
+      </PrimaryButton>
     </footer>
   </div>
 </template>
 
 <script>
-import BackButton from '../components/BackButton'
+import PrimaryButton from '../components/PrimaryButton'
 import DevicePanel from './device/DevicePanel'
 import Header from '../components/Header'
-import devices, { DEVICE_TYPES } from '../utils/devices'
+import { DEVICE_TYPES } from '../../shared/initial-state'
+import { state } from '../utils/socket'
 
 export default {
-  components: { Header, DevicePanel, BackButton },
+  components: { Header, DevicePanel, PrimaryButton },
   props: {
     deviceName: { type: String, required: true },
   },
@@ -38,7 +41,7 @@ export default {
   computed: {
     /** @returns {any} */
     device() {
-      return devices.find(d => d.name === this.deviceName)
+      return state.devices[this.deviceName]
     },
   },
 }

@@ -17,45 +17,66 @@
       </p>
 
       <div class="font-bold flex text-xl">
-        <div class="transition-opacity duration-500 ease-in mr-8" :class="{ 'opacity-0': !temp }">
-          <Sun class="inline" />
-          {{ temp }}°C
-        </div>
-        <div class="transition-opacity duration-500 ease-in" :class="{ 'opacity-0': !humidity }">
-          <Wind class="inline" />
-          {{ humidity }}%
-        </div>
+        <p
+          v-if="alarmDevice.data.state === 'ringing'"
+          class="text-warn cursor-pointer w-full hover:underline"
+        >
+          <Warn class="inline align-text-top mr-1" /> Achtung! Alarm ausgelöst!
+        </p>
+        <template v-else>
+          <div class="mr-8">
+            <Home class="inline align-top" />
+            <transition
+              mode="out-in"
+              enter-class="opacity-0"
+              leave-to-class="opacity-0"
+              enter-active-class="transition-opacity duration-150 ease-in"
+              leave-active-class="transition-opacity duration-200 ease-out"
+            >
+              <span :key="room.temperature">{{ room.temperature || '--' }}°C</span>
+            </transition>
+          </div>
+          <div>
+            <Wind class="inline align-top" />
+            <transition
+              mode="out-in"
+              enter-class="opacity-0"
+              leave-to-class="opacity-0"
+              enter-active-class="transition-opacity duration-150 ease-in"
+              leave-active-class="transition-opacity duration-200 ease-out"
+            >
+              <span :key="room.humidity">{{ room.humidity || '--' }}%</span>
+            </transition>
+          </div>
+        </template>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { formatTime, getName, socketClient } from '../utils'
-import * as EVENTS from '../../shared/event-types'
+import { state } from '../utils/socket'
+import { formatTime, getName } from '../utils'
+import { DEVICE_TYPES } from '../../shared/initial-state'
 
 export default {
-  data: () => ({ currentTime: formatTime(), temp: undefined, humidity: undefined }),
+  data: () => ({ currentTime: formatTime(), timeIntervalId: null }),
   computed: {
     name() {
       return getName()
     },
+    room() {
+      return state.room
+    },
+    alarmDevice() {
+      return Object.values(state.devices).find(device => device.type === DEVICE_TYPES.ALARM)
+    },
   },
   created() {
-    socketClient.on(EVENTS.TEMPERATUR, this.updateTemp)
-    socketClient.on(EVENTS.HUMIDITY, this.updateHumidity)
+    this.timeIntervalId = setInterval(() => (this.currentTime = formatTime()), 60000)
   },
   beforeDestroy() {
-    socketClient.off(EVENTS.TEMPERATUR, this.updateTemp)
-    socketClient.off(EVENTS.HUMIDITY, this.updateHumidity)
-  },
-  methods: {
-    updateTemp(data) {
-      this.temp = data.temp
-    },
-    updateHumidity(data) {
-      this.humidity = data.hum
-    },
+    clearInterval(this.timeIntervalId)
   },
 }
 </script>

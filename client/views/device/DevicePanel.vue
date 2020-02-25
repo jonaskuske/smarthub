@@ -5,7 +5,7 @@
 <script>
 import AlarmPanel from './AlarmPanel'
 import KettlePanel from './KettlePanel'
-import { DEVICE_TYPES } from '../../utils/devices'
+import { DEVICE_TYPES } from '../../../shared/initial-state'
 
 export default {
   props: {

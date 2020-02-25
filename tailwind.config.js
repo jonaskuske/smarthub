@@ -17,7 +17,7 @@ module.exports = {
     },
     extend: {
       borderRadius: { xl: '12px' },
-      colors: { primary: '#6CAEFC', lightgray: '#868686', lightblue: '#6CAEFC' },
+      colors: { primary: '#6CAEFC', lightgray: '#868686', lightblue: '#6CAEFC', warn: '#FF7272' },
       fontSize: { base: '14px' },
       inset: { '1/2': '50%' },
       scale: { '70': '.7' },
@@ -25,13 +25,13 @@ module.exports = {
     },
   },
   variants: {
-    backgroundColor: ['responsive', 'hover', 'focus', 'hocus'],
+    backgroundColor: ['responsive', 'hover', 'focus', 'hocus', 'group-hocus'],
     borderColor: ['responsive', 'hover', 'focus', 'hocus', 'focus-within'],
     content: ['before', 'after'],
     flex: ['responsive', 'before', 'after'],
-    opacity: ['responsive', 'hover', 'focus', 'hocus', 'focus-within', 'group-hocus'],
+    opacity: ['responsive', 'hover', 'focus', 'hocus', 'focus-within', 'group-hocus', 'disabled'],
     order: ['before', 'after'],
-    textColor: ['responsive', 'hover', 'focus', 'hocus'],
+    textColor: ['responsive', 'hover', 'focus', 'hocus', 'group-hocus'],
     textDecoration: ['responsive', 'hover', 'focus', 'hocus'],
   },
   plugins: [

@@ -1,7 +1,4 @@
 import Vue from 'vue'
-import io from 'socket.io-client'
-
-export const socketClient = io('http://smarthub.jonaskuske.de/smarthub')
 
 const dateTimeFormatter = new Intl.DateTimeFormat('de-DE', {
   day: 'numeric',

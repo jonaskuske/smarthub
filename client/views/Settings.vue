@@ -6,7 +6,7 @@
       <label for="notifications">
         Geräte-Benachrichtigungen
       </label>
-      <ToggleButton id="notifications" />
+      <ToggleButton id="notifications" @change="handleNotificationChange" />
     </div>
 
     <div class="flex justify-between items-baseline border-b mb-8">
@@ -17,26 +17,33 @@
     </div>
 
     <footer class="flex justify-center mt-auto p-4">
-      <BackButton />
+      <PrimaryButton as="router-link" to="/">
+        Zurück zur Geräteliste
+      </PrimaryButton>
     </footer>
+    <NotificationModal v-if="showModal" @close="showModal = false" />
   </div>
 </template>
 
 <script>
-import BackButton from '../components/BackButton'
+import PrimaryButton from '../components/PrimaryButton'
 import ToggleButton from '../components/ToggleButton'
+import NotificationModal from '../components/NotificationModal'
 import { getName, updateName } from '../utils'
 
 export default {
-  components: { BackButton, ToggleButton },
+  components: { PrimaryButton, ToggleButton, NotificationModal },
+  data: () => ({ showModal: false }),
   computed: {
+    /** @type {() => string} */
     name: {
-      get() {
-        return getName()
-      },
-      set(nextName) {
-        updateName(nextName)
-      },
+      get: () => getName(),
+      set: nextName => updateName(nextName),
+    },
+  },
+  methods: {
+    handleNotificationChange({ target }) {
+      if (target.checked) this.showModal = true
     },
   },
 }
