@@ -30,35 +30,17 @@
 <script>
 import NotificationGraphic from './NotificationGraphic'
 import PrimaryButton from './PrimaryButton'
-import appIcon from '../assets/icons/android-chrome-512x512.png'
-import doorImage from '../assets/images/door-image.png'
 
 export default {
   components: { NotificationGraphic, PrimaryButton },
   methods: {
     requestNotifications() {
-      console.log('Testing...')
-
-      const show = () => {
-        navigator.serviceWorker.getRegistration().then(reg => {
-          reg.showNotification('Jemand betritt deine Wohnung!', {
-            icon: appIcon,
-            body: `Die Alarmanlage deines Smart Hubs wurde ausgelöst. Warst du das?`,
-            image: doorImage,
-            actions: [
-              { title: 'Öffnen', action: '/' },
-              { title: 'Abschalten', action: '/' },
-            ],
-          })
-        })
-      }
-
       if (Notification.permission === 'default') {
         Notification.requestPermission().then(result => {
-          if (result === 'granted') show()
+          if (result === 'granted') console.log('Granted')
           else console.log('Denied!')
         })
-      } else if (Notification.permission === 'granted') show()
+      } else if (Notification.permission === 'granted') console.log('Already ganted')
     },
   },
 }
