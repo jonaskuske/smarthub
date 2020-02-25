@@ -8,10 +8,11 @@
     "start": "cross-env NODE_ENV=production node -r esm server/index.js",
     "start:dev": "nodemon -r esm server/index.js",
     "client:dev": "parcel serve client/index.html -d ./dist-dev",
-    "client:build": "parcel build client/index.html -d client/dist"
+    "client:build": "parcel build client/index.html -d client/dist --no-cache"
   },
   "dependencies": {
     "body-parser": "^1.19.0",
+    "connect-history-api-fallback": "^1.6.0",
     "cross-env": "^7.0.0",
     "esm": "^3.2.25",
     "express": "^4.17.1",
@@ -43,11 +44,14 @@
     "vue-template-compiler": "^2.6.11",
     "yorkie": "^2.0.0"
   },
+  "gitHooks": {
+    "pre-commit": "lint-staged"
+  },
   "lint-staged": {
-    "*.js": [
+    "*.{js,vue}": [
       "eslint --fix"
     ],
-    "*.{json,css,vue,webmanifest,md,html}": [
+    "*.{json,css,webmanifest,md,html}": [
       "prettier --write"
     ]
   },
@@ -79,6 +83,9 @@
   },
   "posthtml": {
     "recognizeSelfClosing": true
+  },
+  "htmlnano": {
+    "minifySvg": false
   },
   "staticFiles": {
     "staticPath": "client/static"

@@ -8,6 +8,7 @@ import Settings from './views/Settings'
 Vue.use(Router)
 
 const router = new Router({
+  mode: 'history',
   routes: [
     { path: '/', component: DeviceList },
     { path: '/devices', redirect: '/' },

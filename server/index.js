@@ -2,6 +2,7 @@ import path from 'path'
 import http from 'http'
 import express from 'express'
 import bodyParser from 'body-parser'
+import history from 'connect-history-api-fallback'
 import socketIo from 'socket.io'
 import { State } from './state'
 import {
@@ -28,7 +29,10 @@ const state = new State({
   emitCallback: (event, data) => log(event, data) || smarthubNamespace.emit(event, data),
 })
 
-if (isProd) app.use(express.static(fromRoot('client/dist')))
+if (isProd) {
+  app.use(history())
+  app.use(express.static(fromRoot('client/dist')))
+}
 
 app.use(bodyParser.json())
 
