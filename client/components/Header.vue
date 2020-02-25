@@ -17,11 +17,14 @@
       </p>
 
       <div class="font-bold flex text-xl">
+        <p v-if="!controller.online" class="text-lightblue w-full">
+          <WifiOff class="inline align-text-top mr-1 w-6" /> Der Controller ist offline.
+        </p>
         <p
-          v-if="alarmDevice.data.state === 'ringing'"
+          v-else-if="alarmDevice.data.state === 'ringing'"
           class="text-warn cursor-pointer w-full hover:underline"
         >
-          <Warn class="inline align-text-top mr-1" /> Achtung! Alarm ausgelöst!
+          <Warn class="inline align-text-top mr-1 w-6" /> Achtung! Alarm ausgelöst!
         </p>
         <template v-else>
           <div class="mr-8">
@@ -64,6 +67,9 @@ export default {
   computed: {
     name() {
       return getName()
+    },
+    controller() {
+      return state.controller
     },
     room() {
       return state.room
