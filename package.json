@@ -6,9 +6,10 @@
   "private": true,
   "scripts": {
     "start": "cross-env NODE_ENV=production node -r esm server/index.js",
-    "start:dev": "nodemon -r esm server/index.js",
-    "client:dev": "parcel serve client/index.html -d ./dist-dev",
-    "client:build": "parcel build client/index.html -d client/dist --no-cache"
+    "server:dev": "nodemon -r esm server/index.js",
+    "client:dev": "parcel serve client/index.html -d ./dist-dev -p 8080",
+    "serve": "run-p server:dev client:dev",
+    "build": "parcel build client/index.html -d client/dist --no-cache"
   },
   "dependencies": {
     "body-parser": "^1.19.0",
@@ -30,8 +31,10 @@
     "eslint-config-prettier": "^6.10.0",
     "eslint-plugin-prettier": "^3.1.2",
     "eslint-plugin-vue": "^6.2.1",
+    "http-proxy-middleware": "^1.0.0",
     "lint-staged": "^10.0.7",
     "nodemon": "^2.0.2",
+    "npm-run-all": "^4.1.5",
     "parcel-bundler": "^1.12.4",
     "parcel-plugin-clean-dist": "0.0.6",
     "parcel-plugin-static-files-copy": "^2.3.1",

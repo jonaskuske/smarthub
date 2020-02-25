@@ -3,6 +3,7 @@ import http from 'http'
 import express from 'express'
 import bodyParser from 'body-parser'
 import history from 'connect-history-api-fallback'
+import { createProxyMiddleware } from 'http-proxy-middleware'
 import socketIo from 'socket.io'
 import { State } from './state'
 import {
@@ -32,6 +33,13 @@ const state = new State({
 if (isProd) {
   app.use(history())
   app.use(express.static(fromRoot('client/dist')))
+} else {
+  app.use(
+    createProxyMiddleware(['!/emit', '!/socket.io'], {
+      target: 'http://localhost:8080',
+      changeOrigin: true,
+    }),
+  )
 }
 
 app.use(bodyParser.json())
@@ -49,9 +57,7 @@ app.post('/emit', (req, res) => {
 function handleSmarthubConnection(socket) {
   socket.emit(SMARTHUB_UPDATES.ROOT, state.state)
   for (const action of Object.values(ACTIONS)) {
-    socket.on(action, () => {
-      io.to(CONTROLLER_ROOM).emit(action)
-    })
+    socket.on(action, () => io.to(CONTROLLER_ROOM).emit(action))
   }
 }
 
