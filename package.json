@@ -7,7 +7,7 @@
   "scripts": {
     "start": "cross-env NODE_ENV=production node -r esm server/index.js",
     "server:dev": "nodemon -r esm server/index.js",
-    "client:dev": "parcel serve client/index.html -d ./dist-dev -p 8080",
+    "client:dev": "parcel serve client/index.html -d ./dist-dev -p 8081",
     "serve": "run-p server:dev client:dev",
     "build": "parcel build client/index.html -d client/dist --no-cache"
   },

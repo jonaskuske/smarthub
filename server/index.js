@@ -17,7 +17,7 @@ const isProd = process.env.NODE_ENV === 'production'
 const fromRoot = rootPath => path.resolve(__dirname, '../', rootPath)
 const log = console.log
 
-const PORT = Number(process.env.PORT) || 3030
+const PORT = Number(process.env.PORT) || 8080
 const CONTROLLER_ROOM = 'controller'
 
 const app = express()
@@ -36,7 +36,7 @@ if (isProd) {
 } else {
   app.use(
     createProxyMiddleware(['!/emit', '!/socket.io'], {
-      target: 'http://localhost:8080',
+      target: 'http://localhost:8081',
       changeOrigin: true,
     }),
   )

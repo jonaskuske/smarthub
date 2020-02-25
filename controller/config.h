@@ -12,7 +12,7 @@ const char *SOCKET_SERVER_ADDRESS = "smarthub.jonaskuske.de";
 const int SOCKET_SERVER_PORT = 80;
 #else
 const char *SOCKET_SERVER_ADDRESS = "192.168.0.20";
-const int SOCKET_SERVER_PORT = 3030;
+const int SOCKET_SERVER_PORT = 8080;
 #endif
 
 #endif
