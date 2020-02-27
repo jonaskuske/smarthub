@@ -1,7 +1,6 @@
 import path from 'path'
 import http from 'http'
 import express from 'express'
-import bodyParser from 'body-parser'
 import history from 'connect-history-api-fallback'
 import socketIo from 'socket.io'
 import { State } from './state'
@@ -29,7 +28,7 @@ const smarthubNamespace = io.of('/smarthub')
 
 const state = new State({ onUpdate: smarthubNamespace.emit })
 
-app.use(bodyParser.json())
+app.use(express.json())
 
 // Handle POST requests to /emit so Web Hooks/Google Assistant can send actions.
 app.post('/emit', (req, res) => {
@@ -42,9 +41,8 @@ app.post('/emit', (req, res) => {
 })
 
 // Serve the client application.
-// In prod, use history middleware to allow client-side routing & statically serve the compiled app.
-// In dev, proxy to localhost:8081 where the Parcel development server is running.
 if (isProd) {
+  // In prod, use history middleware (to allow client-side routing) & statically serve the compiled app.
   app.use(history())
   app.use(
     express.static(fromRoot('client/dist'), {
@@ -57,6 +55,7 @@ if (isProd) {
     }),
   )
 } else {
+  // In dev, proxy to localhost:8081 where the Parcel development server is running.
   const proxyOptions = { target: 'http://localhost:8081', changeOrigin: true }
   app.use(createProxyMiddleware(proxyOptions))
 }
