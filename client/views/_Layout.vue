@@ -18,7 +18,7 @@
             Willkommen <span class="font-bold">{{ persistedState.name }}!</span>
           </p>
           <StatusBar>
-            <p v-if="!serverState.controller.online && 0" class="text-lightblue w-full">
+            <p v-if="!serverState.controller.online" class="text-lightblue w-full">
               <WifiOff class="inline align-text-top mr-1 w-6" /> Der Controller ist offline.
             </p>
             <p
