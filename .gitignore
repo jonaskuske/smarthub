@@ -35,7 +35,8 @@
 .DS_Store
 node_modules
 dist
-dist-dev
+.dev
+controller/config.h
 .cache
 
 # local env files

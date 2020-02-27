@@ -45,7 +45,7 @@
 
 <script>
 import ToggleButton from '../../components/ToggleButton'
-import { emit, state } from '../../utils/socket'
+import { emit, serverState } from '../../utils'
 import { ACTIONS } from '../../../shared/event-types'
 
 export default {
@@ -61,7 +61,7 @@ export default {
     },
     /** @returns { boolean } */
     isOnline() {
-      return state.controller.online
+      return serverState.controller.online
     },
   },
   methods: {

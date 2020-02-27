@@ -2,20 +2,20 @@ import { getInitialState } from '../shared/initial-state'
 import { SMARTHUB_UPDATES } from '../shared/event-types'
 
 export class State {
-  /** @param {{ emitCallback: (event: string, data?: any) => void) }} */
-  constructor({ emitCallback = () => {} }) {
+  /** @param {{ onUpdate: (event: string, data?: any) => void) }} */
+  constructor({ onUpdate = () => {} }) {
     this.state = getInitialState()
-    this.emitCallback = emitCallback
+    this.onUpdate = onUpdate
   }
 
   updateController(controllerData) {
     this.state.controller = { ...this.state.controller, ...controllerData }
-    this.emitCallback(SMARTHUB_UPDATES.CONTROLLER, this.state.controller)
+    this.onUpdate(SMARTHUB_UPDATES.CONTROLLER, this.state.controller)
   }
 
   updateRoom(roomInfo) {
     this.state.room = { ...this.state.room, ...roomInfo }
-    this.emitCallback(SMARTHUB_UPDATES.ROOM, this.state.room)
+    this.onUpdate(SMARTHUB_UPDATES.ROOM, this.state.room)
   }
 
   updateDevice(name, deviceData) {
@@ -23,12 +23,12 @@ export class State {
     if (!device) throw Error(`Unknown device: ${name}`)
 
     this.state.devices[name].data = { ...device.data, ...deviceData }
-    this.emitCallback(SMARTHUB_UPDATES.DEVICE, this.state.devices[name])
+    this.onUpdate(SMARTHUB_UPDATES.DEVICE, this.state.devices[name])
   }
 
   replaceState(newState) {
     this.state = newState
-    this.emitCallback(SMARTHUB_UPDATES.ROOT, this.state)
+    this.onUpdate(SMARTHUB_UPDATES.ROOT, this.state)
   }
 
   reset() {

@@ -1,27 +1,27 @@
 <template>
-  <div>
-    <Header />
+  <div class="h-full flex flex-col px-6 pt-6">
+    <h2 class="text-lightgray font-bold mb-5">Geräte</h2>
 
-    <main class="px-6 pt-6">
-      <h2 class="text-lightgray font-bold mb-5">Geräte</h2>
-      <div class="grid gap-6 device-grid">
-        <DeviceTile v-for="device in devices" :key="device.name" :device="device" />
-      </div>
-    </main>
+    <div v-if="devices.length" class="grid gap-6 device-grid">
+      <DeviceTile v-for="device in devices" :key="device.name" :device="device" />
+    </div>
+
+    <p v-else class="my-auto text-center">
+      <span class="font-bold text-4xl text-warn">!</span><br />
+      Keine Geräte vorhanden.<br />Registriere Controller, um Smart Hub zu nutzen.
+    </p>
   </div>
 </template>
 
 <script>
-import Header from '../components/Header'
 import DeviceTile from './deviceList/DeviceTile'
-
-import { state } from '../utils/socket'
+import { serverState } from '../utils'
 
 export default {
-  components: { Header, DeviceTile },
+  components: { DeviceTile },
   computed: {
     devices() {
-      return Object.values(state.devices)
+      return Object.values(serverState.devices)
     },
   },
 }

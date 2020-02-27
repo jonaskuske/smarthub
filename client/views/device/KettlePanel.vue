@@ -17,30 +17,25 @@
       </IconButton>
     </div>
 
-    <transition
-      mode="out-in"
-      enter-active-class="transition-opacity duration-150 ease-in"
-      leave-active-class="transition-opacity duration-200 ease-out"
-      enter-class="opacity-0"
-      leave-to-class="opacity-0"
-    >
+    <Fade>
       <p :key="statusMessage" class="absolute bottom-0 pb-4 text-center lowercase truncate">
         {{ statusMessage }}
       </p>
-    </transition>
+    </Fade>
   </div>
 </template>
 
 <script>
 import CircleChart from '../../components/CircleChart'
+import Fade from '../../components/Fade'
 import IconButton from '../../components/IconButton'
-import { emit, state } from '../../utils/socket'
+import { emit, serverState } from '../../utils'
 import { ACTIONS } from '../../../shared/event-types'
 
-const startTemp = state.room.temperature || 20
+const startTemp = serverState.room.temperature || 20
 
 export default {
-  components: { CircleChart, IconButton },
+  components: { CircleChart, Fade, IconButton },
   props: {
     device: { type: Object, required: true },
   },
@@ -52,7 +47,7 @@ export default {
     },
     /** @returns { boolean } */
     isOnline() {
-      return state.controller.online
+      return serverState.controller.online
     },
     /** @returns { string } */
     statusMessage() {

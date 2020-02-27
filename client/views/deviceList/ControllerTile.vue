@@ -8,7 +8,7 @@
 
 <script>
 import BaseTile from './_BaseTile'
-import { state } from '../../utils/socket'
+import { serverState } from '../../utils'
 import appIcon from '../../assets/icons/android-chrome-512x512.png'
 import doorImage from '../../assets/images/door-image.png'
 
@@ -19,7 +19,7 @@ export default {
   },
   computed: {
     isOnline() {
-      return state.controller.online
+      return serverState.controller.online
     },
   },
   methods: {

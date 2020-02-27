@@ -1,6 +1,6 @@
 <template>
   <button
-    class="w-12 h-12 text-xl rounded-full shadow-md flex items-start justify-center focus:outline-none disabled:opacity-50 disabled:grayscale"
+    class="w-12 h-12 text-xl rounded-full shadow-md flex items-start justify-center focus:outline-none disabled:opacity-50 disabled:grayscale disabled:cursor-default"
     v-bind="$attrs"
     v-on="$listeners"
   >

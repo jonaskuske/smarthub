@@ -5,16 +5,15 @@
   "license": "UNLICENSED",
   "private": true,
   "scripts": {
-    "start": "cross-env NODE_ENV=production node -r esm server/index.js",
-    "server:dev": "nodemon -r esm server/index.js",
-    "client:dev": "parcel serve client/index.html -d ./dist-dev -p 8081",
+    "start": "node server/index.js",
+    "server:dev": "nodemon server/index.js --watch server --watch shared",
+    "client:dev": "parcel serve client/index.html -p 8081 -d client/.dev --log-level 2",
     "serve": "run-p server:dev client:dev",
     "build": "parcel build client/index.html -d client/dist --no-cache"
   },
   "dependencies": {
     "body-parser": "^1.19.0",
     "connect-history-api-fallback": "^1.6.0",
-    "cross-env": "^7.0.0",
     "esm": "^3.2.25",
     "express": "^4.17.1",
     "socket.io": "^2.3.0",
@@ -26,7 +25,9 @@
   "devDependencies": {
     "@fullhuman/postcss-purgecss": "^2.0.6",
     "@vue/component-compiler-utils": "^3.1.1",
+    "address": "^1.1.2",
     "autoprefixer": "^9.7.4",
+    "default-gateway": "^5.0.5",
     "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.10.0",
     "eslint-plugin-prettier": "^3.1.2",

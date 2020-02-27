@@ -6,7 +6,7 @@
 import AlarmTileVue from './AlarmTile.vue'
 import ControllerTileVue from './ControllerTile.vue'
 import KettleTileVue from './KettleTile.vue'
-import { DEVICE_TYPES } from '../../../shared/initial-state'
+import * as DEVICE_TYPES from '../../../shared/device-types'
 
 export default {
   props: {
@@ -15,11 +15,11 @@ export default {
   computed: {
     Tile() {
       switch (this.device.type) {
-        case DEVICE_TYPES.CONTROLLER:
+        case DEVICE_TYPES.DEVICE_CONTROLLER:
           return ControllerTileVue
-        case DEVICE_TYPES.ALARM:
+        case DEVICE_TYPES.DEVICE_ALARM:
           return AlarmTileVue
-        case DEVICE_TYPES.KETTLE:
+        case DEVICE_TYPES.DEVICE_KETTLE:
           return KettleTileVue
         default:
           return null

@@ -1,25 +1,21 @@
-export const DEVICE_TYPES = {
-  CONTROLLER: 'CONTROLLER',
-  ALARM: 'ALARM',
-  KETTLE: 'KETTLE',
-}
+import * as DEVICE_TYPES from './device-types'
 
 const devices = [
   {
     name: 'Wasserkocher',
-    type: DEVICE_TYPES.KETTLE,
+    type: DEVICE_TYPES.DEVICE_KETTLE,
     image: '/images/kettle.png',
     data: { active: false, temperature: null },
   },
   {
     name: 'Alarmanlage',
-    type: DEVICE_TYPES.ALARM,
+    type: DEVICE_TYPES.DEVICE_ALARM,
     image: '/images/alarm.png',
     data: { state: 'disabled', silentMode: false },
   },
   {
     name: 'ESP-12F (8266)',
-    type: DEVICE_TYPES.CONTROLLER,
+    type: DEVICE_TYPES.DEVICE_CONTROLLER,
     image: '/images/esp8266.png',
   },
 ]
@@ -27,5 +23,5 @@ const devices = [
 export const getInitialState = () => ({
   controller: { online: false },
   room: { temperature: null, humidity: null },
-  devices: Object.fromEntries(devices.map(device => [device.name, device])),
+  devices: Object.fromEntries(devices.map(device => [device.name, { ...device }])),
 })

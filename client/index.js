@@ -1,20 +1,25 @@
 import Vue from 'vue'
-import router from './router'
-import IconPlugin from './components/icons/IconPlugin'
 import './assets/styles/index.css'
+import App from './App.vue'
+import router from './router'
+import icons from './components/icons/*.vue'
 
-Vue.use(IconPlugin)
+Vue.config.productionTip = false
+
+const iconComponents = Object.fromEntries(
+  Object.entries(icons).map(([name, mod]) => [name, mod.default]),
+)
+
+Vue.mixin({ components: iconComponents })
 
 new Vue({
   el: '#root',
   router,
-  render(h) {
-    return h('div', { class: 'flex flex-col h-full', domProps: { id: 'root' } }, [h('router-view')])
-  },
+  render: h => h(App),
 })
 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker
     .register('./service-worker.js')
-    .catch(err => console.log('Service Worker konnte nicht regisriert werden', err))
+    .catch(err => console.log('Service Worker konnte nicht registriert werden', err))
 }

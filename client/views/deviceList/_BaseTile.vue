@@ -9,6 +9,7 @@
             </div>
           </div>
         </div>
+
         <div @click.stop>
           <slot />
         </div>
@@ -16,23 +17,21 @@
 
       <footer class="mt-auto mb-2 w-full">
         <h4 class="font-bold">{{ device.name }}</h4>
-        <transition
-          mode="out-in"
-          enter-active-class="transition-opacity duration-150 ease-in"
-          leave-active-class="transition-opacity duration-200 ease-out"
-          enter-class="opacity-0"
-          leave-to-class="opacity-0"
-        >
+
+        <Fade>
           <!-- eslint-disable-next-line vue/no-v-html -->
           <p :key="status" class="text-sm lowercase truncate" v-html="status" />
-        </transition>
+        </Fade>
       </footer>
     </div>
   </div>
 </template>
 
 <script>
+import Fade from '../../components/Fade'
+
 export default {
+  components: { Fade },
   props: {
     device: { type: Object, required: true },
     status: { type: String, default: '&nbsp;' },

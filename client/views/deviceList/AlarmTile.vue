@@ -1,5 +1,5 @@
 <template>
-  <router-link :to="`/devices/${device.name}`" class="cursor-default">
+  <router-link tag="div" :to="`/devices/${device.name}`">
     <BaseTile :device="device" :status="statusMessage">
       <ToggleButton :checked="isEnabled" :disabled="!isOnline" @change="handleChange" />
     </BaseTile>
@@ -9,7 +9,7 @@
 <script>
 import BaseTile from './_BaseTile'
 import ToggleButton from '../../components/ToggleButton.vue'
-import { emit, state } from '../../utils/socket'
+import { emit, serverState } from '../../utils'
 import { ACTIONS } from '../../../shared/event-types'
 
 export default {
@@ -25,7 +25,7 @@ export default {
     },
     /** @returns { boolean } */
     isOnline() {
-      return state.controller.online
+      return serverState.controller.online
     },
     /** @returns {string} */
     statusMessage() {

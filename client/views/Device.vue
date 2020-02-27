@@ -1,7 +1,6 @@
 <template>
-  <div class="h-full flex flex-col">
-    <Header />
-    <main class="px-6 pt-6">
+  <div class="h-full flex flex-col px-6 pt-6">
+    <template v-if="device">
       <nav aria-label="breadcrumb" class="text-lightgray mb-5">
         <ol>
           <li class="inline font-light">
@@ -15,9 +14,15 @@
       <div class="relative aspect-ratio-1/1 shadow-lg overflow-hidden rounded-lg mb-8">
         <DevicePanel :device="device" class="absolute w-full h-full p-5" />
       </div>
-    </main>
+    </template>
 
-    <footer class="flex justify-center mt-auto p-4">
+    <p v-else class="my-auto text-center">
+      <span class="font-bold text-4xl text-warn">!</span><br />
+      <span class="font-bold">"{{ deviceName }}"</span> wurde nicht gefunden.<br />
+      Ist der Controller online?
+    </p>
+
+    <footer class="flex justify-center mt-auto p-4 flex-shrink-0">
       <PrimaryButton as="router-link" to="/">
         Zurück zur Geräteliste
       </PrimaryButton>
@@ -26,22 +31,19 @@
 </template>
 
 <script>
-import PrimaryButton from '../components/PrimaryButton'
 import DevicePanel from './device/DevicePanel'
-import Header from '../components/Header'
-import { DEVICE_TYPES } from '../../shared/initial-state'
-import { state } from '../utils/socket'
+import PrimaryButton from '../components/PrimaryButton'
+import { serverState } from '../utils'
 
 export default {
-  components: { Header, DevicePanel, PrimaryButton },
+  components: { DevicePanel, PrimaryButton },
   props: {
     deviceName: { type: String, required: true },
   },
-  data: () => ({ DEVICE_TYPES }),
   computed: {
     /** @returns {any} */
     device() {
-      return state.devices[this.deviceName]
+      return serverState.devices[this.deviceName]
     },
   },
 }

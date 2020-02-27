@@ -1,5 +1,5 @@
 self.addEventListener('fetch', event => {
-  return fetch(event.request)
+  return event.respondWith(fetch(event.request))
 })
 
 self.addEventListener('notificationclick', evt => {

@@ -28,6 +28,7 @@ module.exports = {
     backgroundColor: ['responsive', 'hover', 'focus', 'hocus', 'group-hocus'],
     borderColor: ['responsive', 'hover', 'focus', 'hocus', 'focus-within'],
     content: ['before', 'after'],
+    cursor: ['disabled'],
     flex: ['responsive', 'before', 'after'],
     opacity: ['responsive', 'hover', 'focus', 'hocus', 'focus-within', 'group-hocus', 'disabled'],
     order: ['before', 'after'],
