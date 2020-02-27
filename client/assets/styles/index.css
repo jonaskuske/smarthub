@@ -16,3 +16,35 @@
     filter: grayscale(1);
   }
 }
+
+.has-scrollbar .scrollbar-transparent::-webkit-scrollbar,
+.has-scrollbar .scrollbar-gray-200::-webkit-scrollbar {
+  background: transparent;
+  width: 6px;
+}
+.has-scrollbar .scrollbar-transparent::-webkit-scrollbar-thumb {
+  @apply bg-transparent;
+}
+.has-scrollbar .scrollbar-gray-200::-webkit-scrollbar,
+.has-scrollbar .hover\:scrollbar-gray-200:hover::-webkit-scrollbar {
+  background: transparent;
+}
+.has-scrollbar .scrollbar-gray-200::-webkit-scrollbar-thumb,
+.has-scrollbar .hover\:scrollbar-gray-200:hover::-webkit-scrollbar-thumb {
+  @apply bg-gray-200;
+  @apply rounded-lg;
+}
+.has-scrollbar .scrollbar-gray-200::-webkit-scrollbar-thumb:hover,
+.has-scrollbar .hover\:scrollbar-gray-200:hover::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-300;
+}
+
+.has-scrollbar .scrollbar-transparent {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+.has-scrollbar .scrollbar-gray-200,
+.has-scrollbar .hover\:scrollbar-gray-200:hover {
+  scrollbar-width: thin;
+  scrollbar-color: theme('colors.gray.200') transparent;
+}

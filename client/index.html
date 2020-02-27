@@ -20,8 +20,18 @@
     <link rel="manifest" href="./smarthub.webmanifest" />
   </head>
 
-  <body class="h-full">
+  <body class="h-full scrollbar-gray-200">
     <div id="root"></div>
+
+    <!-- detect whether browser has a permanently-visible scrollbar -->
+    <script>
+      ;((doc, style) => {
+        const el = doc.body.appendChild(Object.assign(doc.createElement('div'), { style }))
+        if (el.offsetWidth - el.clientWidth > 0) doc.documentElement.className += ' has-scrollbar'
+        doc.body.removeChild(el)
+      })(document, 'width:100px;height:100px;overflow:scroll;position:absolute;top:-100vh')
+    </script>
+
     <script src="./index.js"></script>
   </body>
 </html>
