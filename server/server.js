@@ -6,6 +6,7 @@ import socketIo from 'socket.io'
 import { State } from './state'
 import { createProxyMiddleware } from 'http-proxy-middleware'
 import * as ipAddress from './ip-address'
+import chalk from 'chalk'
 import {
   REGISTER_CONTROLLER,
   ACTIONS,
@@ -56,7 +57,7 @@ if (isProd) {
   )
 } else {
   // In dev, proxy to localhost:8081 where the Parcel development server is running.
-  const proxyOptions = { target: 'http://localhost:8081', changeOrigin: true }
+  const proxyOptions = { target: 'http://localhost:8081', changeOrigin: true, logLevel: 'warn' }
   app.use(createProxyMiddleware(proxyOptions))
 }
 
@@ -103,12 +104,12 @@ io.on('connection', socket => {
 
 server.listen(PORT, () => {
   if (isProd) {
-    log(`Server running on port ${PORT}.`)
+    log(chalk`Server running on port {bold ${PORT}}.`)
   } else {
-    log(`\nApp is running at http://localhost:${PORT}.`)
+    log(chalk`\nApp is running at {underline http://localhost:${PORT}}.`)
 
     const ip = ipAddress.local()
-    if (ip) log(`Controllers can connect to ${ip} on port ${PORT}.`)
+    if (ip) log(chalk`Controllers can connect to {bold ${ip}} on port {bold ${PORT}}.\n`)
     else log(`Controllers can connect to your local IP (failed to auto-detect) on port ${PORT}.`)
   }
 })

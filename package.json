@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "start": "node server/index.js",
-    "server:dev": "nodemon server/index.js --watch server --watch shared",
+    "server:dev": "nodemon server/index.js --watch server --watch shared --quiet",
     "client:dev": "parcel serve client/index.html -p 8081 -d client/.dev --log-level 2",
     "serve": "run-p server:dev client:dev",
     "build": "parcel build client/index.html -d client/dist --no-cache"
@@ -26,6 +26,7 @@
     "@vue/component-compiler-utils": "^3.1.1",
     "address": "^1.1.2",
     "autoprefixer": "^9.7.4",
+    "chalk": "^3.0.0",
     "default-gateway": "^5.0.5",
     "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.10.0",
