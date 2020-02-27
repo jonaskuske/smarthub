@@ -46,7 +46,16 @@ app.post('/emit', (req, res) => {
 // In dev, proxy to localhost:8081 where the Parcel development server is running.
 if (isProd) {
   app.use(history())
-  app.use(express.static(fromRoot('client/dist')))
+  app.use(
+    express.static(fromRoot('client/dist'), {
+      maxAge: '1y',
+      setHeaders(res, path) {
+        if (path.endsWith('.html')) {
+          res.set('Cache-Control', 'public, max-age=0')
+        }
+      },
+    }),
+  )
 } else {
   const proxyOptions = { target: 'http://localhost:8081', changeOrigin: true }
   app.use(createProxyMiddleware(proxyOptions))
