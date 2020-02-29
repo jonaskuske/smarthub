@@ -1,7 +1,7 @@
 <template>
   <router-link tag="div" :to="`/devices/${device.name}`">
     <BaseTile :device="device" :status="statusMessage">
-      <ToggleButton :checked="isEnabled" :disabled="!isOnline" @change="handleChange" />
+      <ToggleButton :value="isEnabled" :disabled="!isOnline" @change="handleChange" />
     </BaseTile>
   </router-link>
 </template>
@@ -9,8 +9,8 @@
 <script>
 import BaseTile from './_BaseTile'
 import ToggleButton from '../../components/ToggleButton.vue'
-import { emit, serverState } from '../../utils'
-import { ACTIONS } from '../../../shared/event-types'
+import { emitToController, serverState } from '../../utils'
+import { CONTROLLER_ACTIONS } from '../../../shared/event-types'
 
 export default {
   components: { BaseTile, ToggleButton },
@@ -34,9 +34,9 @@ export default {
     },
   },
   methods: {
-    handleChange({ target }) {
-      if (target.checked) emit(ACTIONS.ALARM_ENABLE)
-      else emit(ACTIONS.ALARM_DISABLE)
+    handleChange(enabled) {
+      if (enabled) emitToController(CONTROLLER_ACTIONS.ALARM_ENABLE)
+      else emitToController(CONTROLLER_ACTIONS.ALARM_DISABLE)
     },
   },
 }

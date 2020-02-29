@@ -1,19 +1,23 @@
 <template>
   <div class="font-bold flex text-xl">
-    <slot>
-      <div class="mr-8">
-        <Home class="inline align-top" />
-        <Fade>
-          <span :key="temperature" class="nums">{{ temperature || '--' }}°C</span>
-        </Fade>
-      </div>
-      <div>
-        <Wind class="inline align-top" />
-        <Fade>
-          <span :key="humidity" class="nums">{{ humidity || '--' }}%</span>
-        </Fade>
-      </div>
-    </slot>
+    <Fade>
+      <slot>
+        <div class="flex">
+          <div class="mr-8">
+            <Home class="inline align-top" />
+            <Fade>
+              <span :key="temperature" class="nums">{{ temperature || '--' }}°C</span>
+            </Fade>
+          </div>
+          <div>
+            <Wind class="inline align-top" />
+            <Fade>
+              <span :key="humidity" class="nums">{{ humidity || '--' }}%</span>
+            </Fade>
+          </div>
+        </div>
+      </slot>
+    </Fade>
   </div>
 </template>
 

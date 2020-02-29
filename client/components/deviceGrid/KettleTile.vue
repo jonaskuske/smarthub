@@ -12,8 +12,8 @@
 <script>
 import IconButton from '../../components/IconButton'
 import BaseTile from './_BaseTile'
-import { emit, serverState } from '../../utils'
-import { ACTIONS } from '../../../shared/event-types'
+import { emitToController, serverState } from '../../utils'
+import { CONTROLLER_ACTIONS } from '../../../shared/event-types'
 
 export default {
   components: { BaseTile, IconButton },
@@ -37,7 +37,7 @@ export default {
   },
   methods: {
     turnOn() {
-      emit(ACTIONS.KETTLE_TURN_ON)
+      emitToController(CONTROLLER_ACTIONS.KETTLE_TURN_ON)
     },
   },
 }

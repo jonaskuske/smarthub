@@ -4,19 +4,20 @@ import express from 'express'
 import history from 'connect-history-api-fallback'
 import socketIo from 'socket.io'
 import { State } from './state'
+import * as notificationService from './notifications'
 import { createProxyMiddleware } from 'http-proxy-middleware'
 import * as ipAddress from './ip-address'
 import chalk from 'chalk'
 import {
   REGISTER_CONTROLLER,
-  ACTIONS,
+  CONTROLLER_ACTIONS,
   SERVER_UPDATES,
   SMARTHUB_UPDATES,
 } from '../shared/event-types'
 
 const isProd = process.env.NODE_ENV === 'production'
 const fromRoot = rootPath => path.resolve(__dirname, '../', rootPath)
-const log = console.log
+const info = console.log
 
 const PORT = Number(process.env.PORT) || 8080
 const CONTROLLER_ROOM = 'controller'
@@ -27,17 +28,21 @@ const io = socketIo(server)
 
 const smarthubNamespace = io.of('/smarthub')
 
-const state = new State({ onUpdate: smarthubNamespace.emit })
+const state = new State({
+  onUpdate(event, ...data) {
+    smarthubNamespace.emit(event, ...data)
+  },
+})
 
 app.use(express.json())
 
-// Handle POST requests to /emit so Web Hooks/Google Assistant can send actions.
+// Handle POST requests to /emit so Web Hooks/Google Assistant can send actions to the controller.
 app.post('/emit', (req, res) => {
   const { EVENT } = req.body
 
-  if (Object.values(ACTIONS).includes(EVENT)) {
+  if (Object.values(CONTROLLER_ACTIONS).includes(EVENT)) {
     io.to(CONTROLLER_ROOM).emit(EVENT)
-    res.status(200).send('OK')
+    res.sendStatus(200)
   } else res.status(400).send(`Unknown event: ${EVENT}`)
 })
 
@@ -65,8 +70,10 @@ function handleSmarthubConnection(socket) {
   // Emit current state to so client can set its initial state
   socket.emit(SMARTHUB_UPDATES.ROOT, state.state)
 
-  // Forward emitted actions to the controller
-  for (const action of Object.values(ACTIONS)) {
+  notificationService.attachListeners(socket)
+
+  // Forward emitted controller actions to the controller
+  for (const action of Object.values(CONTROLLER_ACTIONS)) {
     socket.on(action, () => io.to(CONTROLLER_ROOM).emit(action))
   }
 }
@@ -83,8 +90,23 @@ function handleControllerConnection(socket) {
     socket.on(SERVER_UPDATES.ALARM_SILENT_MODE_STATE, silentMode => {
       state.updateDevice('Alarmanlage', { silentMode })
     })
-    socket.on(SERVER_UPDATES.ALARM_STATE, alarmState => {
-      state.updateDevice('Alarmanlage', { state: alarmState })
+
+    socket.on(SERVER_UPDATES.ALARM_STATE, async alarmState => {
+      const deviceName = 'Alarmanlage'
+      state.updateDevice(deviceName, { state: alarmState })
+
+      if (alarmState === 'ringing') {
+        notificationService.sendNotification({
+          title: 'Alarm ausgelöst!',
+          body: 'Die Alarmanlage hat eine Bewegung registriert und wurde ausgelöst. Warst das du?',
+          image: '/images/door-image.png',
+          actions: [
+            { action: 'stop_alarm', title: 'Abschalten' },
+            { action: 'close', title: 'Schließen' },
+          ],
+          data: { device: deviceName },
+        })
+      }
     })
 
     socket.on(SERVER_UPDATES.KETTLE_TEMP, temperature => {
@@ -104,12 +126,12 @@ io.on('connection', socket => {
 
 server.listen(PORT, () => {
   if (isProd) {
-    log(chalk`Server running on port {bold ${PORT}}.`)
+    info(chalk`Server running on port {bold ${PORT}}.`)
   } else {
-    log(chalk`\nApp is running at {underline http://localhost:${PORT}}.`)
+    info(chalk`\nApp is running at {underline http://localhost:${PORT}}.`)
 
     const ip = ipAddress.local()
-    if (ip) log(chalk`Controllers can connect to {bold ${ip}} on port {bold ${PORT}}.\n`)
-    else log(`Controllers can connect to your local IP (failed to auto-detect) on port ${PORT}.`)
+    if (ip) info(chalk`Controllers can connect to {bold ${ip}} on port {bold ${PORT}}.\n`)
+    else info(`Controllers can connect to your local IP (failed to auto-detect) on port ${PORT}.`)
   }
 })

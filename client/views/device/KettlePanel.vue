@@ -29,8 +29,8 @@
 import CircleChart from '../../components/CircleChart'
 import Fade from '../../components/Fade'
 import IconButton from '../../components/IconButton'
-import { emit, serverState } from '../../utils'
-import { ACTIONS } from '../../../shared/event-types'
+import { emitToController, serverState } from '../../utils'
+import { CONTROLLER_ACTIONS } from '../../../shared/event-types'
 
 const startTemp = serverState.room.temperature || 20
 
@@ -68,7 +68,7 @@ export default {
   },
   methods: {
     turnOn() {
-      emit(ACTIONS.KETTLE_TURN_ON)
+      emitToController(CONTROLLER_ACTIONS.KETTLE_TURN_ON)
     },
     startTimer() {
       this.timerIntervalId = setInterval(() => this.timerPercent++, 105000 / 100)

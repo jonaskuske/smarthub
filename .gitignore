@@ -39,6 +39,10 @@ dist
 controller/config.h
 .cache
 
+data/*
+!data/.gitkeep
+
+
 # local env files
 .env.local
 .env.*.local

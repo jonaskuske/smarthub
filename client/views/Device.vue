@@ -1,14 +1,14 @@
 <template>
   <div class="h-full relative lg:flex">
     <div
-      class="hidden lg:block flex-1 pt-6 pr-3 overflow-auto scrollbar-transparent hover:scrollbar-gray-200 scrolling-touch absolute left-0 top-0 h-full w-64"
+      class="hidden lg:block flex-1 pt-6 px-3 overflow-auto scrollbar-transparent hover:scrollbar-gray-200 scrolling-touch absolute left-0 top-0 h-full w-64"
     >
       <Breadcrumbs :items="crumbs" />
       <DeviceGrid :devices="devices" />
     </div>
 
     <div
-      class="h-full flex-1 pl-3 pt-6 lg:absolute top-0 right-0 lg:w-1/2 lg:overflow-auto scrollbar-transparent hover:scrollbar-gray-200 scrolling-touch"
+      class="h-full flex-1 pl-3 pt-6 lg:absolute top-0 right-0 lg:w-1/2 lg:overflow-auto lg:pr-3 scrollbar-transparent hover:scrollbar-gray-200 scrolling-touch"
     >
       <div class="h-full flex flex-col">
         <template v-if="device">

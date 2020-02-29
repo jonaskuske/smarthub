@@ -1,6 +1,12 @@
 <template>
   <label class="relative inline-block" style="width: 30px; height: 18px;">
-    <input class="invisible" type="checkbox" v-bind="$attrs" v-on="$listeners" />
+    <input
+      v-bind="$attrs"
+      class="invisible"
+      type="checkbox"
+      :checked="value"
+      @change="handleChange"
+    />
     <span
       class="slider round absolute cursor-pointer inset-0 rounded-full duration-300 transition bg-gray-400"
     />
@@ -10,6 +16,13 @@
 <script>
 export default {
   inheritAttrs: false,
+  model: { event: 'change' },
+  props: { value: Boolean },
+  methods: {
+    handleChange(evt) {
+      this.$emit('change', evt.target.checked)
+    },
+  },
 }
 </script>
 
@@ -27,7 +40,7 @@ export default {
 }
 input:disabled + .slider {
   @apply opacity-50;
-  filter: grayscale(1);
+  @apply cursor-default;
 }
 input:checked + .slider {
   @apply bg-lightblue;

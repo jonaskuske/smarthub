@@ -1,5 +1,6 @@
 {
   "name": "smarthub",
+  "homepage": "https://smarthub.jonaskuske.de",
   "version": "1.0.0",
   "main": "server/index.js",
   "license": "UNLICENSED",
@@ -7,22 +8,26 @@
   "scripts": {
     "start": "node server/index.js",
     "server:dev": "nodemon server/index.js --watch server --watch shared --quiet",
-    "client:dev": "parcel serve client/index.html -p 8081 -d client/.dev --log-level 2",
+    "client:dev": "parcel serve client/index.html -p 8081 -d client/.dev --log-level 2 ",
     "serve": "run-p server:dev client:dev",
     "build": "parcel build client/index.html -d client/dist --no-cache"
   },
+  "browserslist": "Edge >= 17, Chrome >= 70, Firefox >= 65, Safari >= 11",
   "dependencies": {
     "connect-history-api-fallback": "^1.6.0",
+    "core-js": "^3.6.4",
     "esm": "^3.2.25",
     "express": "^4.17.1",
     "socket.io": "^2.3.0",
     "socket.io-client": "^2.3.0",
     "vue": "^2.6.11",
     "vue-hot-reload-api": "^2.3.4",
-    "vue-router": "^3.1.5"
+    "vue-router": "^3.1.6"
   },
   "devDependencies": {
-    "@fullhuman/postcss-purgecss": "^2.0.6",
+    "@babel/core": "^7.8.6",
+    "@babel/preset-env": "^7.8.6",
+    "@fullhuman/postcss-purgecss": "^2.1.0",
     "@vue/component-compiler-utils": "^3.1.1",
     "address": "^1.1.2",
     "autoprefixer": "^9.7.4",
@@ -33,7 +38,7 @@
     "eslint-plugin-prettier": "^3.1.2",
     "eslint-plugin-vue": "^6.2.1",
     "http-proxy-middleware": "^1.0.0",
-    "lint-staged": "^10.0.7",
+    "lint-staged": "^10.0.8",
     "nodemon": "^2.0.2",
     "npm-run-all": "^4.1.5",
     "parcel-bundler": "^1.12.4",
@@ -46,6 +51,7 @@
     "tailwindcss-interaction-variants": "^3.1.0",
     "tailwindcss-pseudo-elements": "^1.1.2",
     "vue-template-compiler": "^2.6.11",
+    "web-push": "^3.4.3",
     "yorkie": "^2.0.0"
   },
   "gitHooks": {
@@ -83,7 +89,15 @@
       "plugin:vue/recommended",
       "plugin:prettier/recommended",
       "prettier/vue"
-    ]
+    ],
+    "rules": {
+      "no-unused-vars": [
+        "error",
+        {
+          "ignoreRestSiblings": true
+        }
+      ]
+    }
   },
   "posthtml": {
     "recognizeSelfClosing": true

@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import io from 'socket.io-client'
-import { ACTIONS, SMARTHUB_UPDATES } from '../../shared/event-types'
+import { CONTROLLER_ACTIONS, SMARTHUB_UPDATES, SERVER_ACTIONS } from '../../shared/event-types'
 import { getInitialState } from '../../shared/initial-state'
 
 const { SOCKET_URL = '' } = process.env
@@ -9,10 +9,26 @@ const socketClient = io(`${SOCKET_URL}/smarthub`)
 
 export const serverState = Vue.observable(getInitialState())
 
-export function emit(action) {
-  if (!Object.values(ACTIONS).includes(action)) throw Error(`Unknown action: ${action}`)
+export function emitToController(action, ...data) {
+  if (!Object.values(CONTROLLER_ACTIONS).includes(action)) throw Error(`Unknown action: ${action}`)
 
-  socketClient.emit(action)
+  let markAsDone
+  const donePromise = new Promise(resolve => (markAsDone = resolve))
+
+  socketClient.emit(action, ...data, markAsDone)
+
+  return donePromise
+}
+
+export function emitToServer(action, ...data) {
+  if (!Object.values(SERVER_ACTIONS).includes(action)) throw Error(`Unknown action: ${action}`)
+
+  let markAsDone
+  const donePromise = new Promise(resolve => (markAsDone = resolve))
+
+  socketClient.emit(action, ...data, markAsDone)
+
+  return donePromise
 }
 
 socketClient.on(SMARTHUB_UPDATES.ROOT, nextState => {

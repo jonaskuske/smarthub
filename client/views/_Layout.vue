@@ -4,10 +4,11 @@
       <div class="container p-8">
         <div class="relative">
           <router-link
+            id="app_settings"
             to="/settings"
-            class="absolute top-0 right-0 text-lightgray transform transition-transform duration-300 ease-in-out hover:rotate-90 focus:text-lightblue"
+            class="absolute top-0 right-0 text-lightgray transform transition-transform duration-300 ease-in-out hover:rotate-90 focus:rotate-90 focus:text-lightblue focus:outline-none"
           >
-            <span class="sr-only">Einsatellungen</span>
+            <span class="sr-only">Einstellungen</span>
             <Cog aria-hidden="true" />
           </router-link>
 
