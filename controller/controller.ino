@@ -105,7 +105,7 @@ void startSys() {
     systemAn = true;
     countdown = false;
     socketClient.emit(UPDATE_ALARM_STATE, "\"enabled\"");
-    Serial.println("System gestartet & Systemstart an Server gemeldet");
+    Serial.println("Alarmanlage aktiviert & Aktivierung an Server gemeldet");
 }
 
 void alarmCountdown() {
@@ -118,7 +118,7 @@ void alarmCountdown() {
 
 void alarmTrigger() {
     if (!alarmTriggered) {
-        Serial.println("Timer abgelaufen. Stiller Alarm wird laut & an Server gesendet.");
+        Serial.println("Countdown vor Alarm abgelaufen. Alarm State: ringing an Server gesendet.");
         socketClient.emit(UPDATE_ALARM_STATE, "\"ringing\"");
         if (!silentMode) {
             alarmLaut = true;
@@ -134,7 +134,7 @@ void alarmTrigger() {
 }
 
 void startAlarmCountdown() {
-    Serial.println("Countdown für Alarmanlagen-Start gestartet");
+    Serial.println("Countdown für Alarmanlagen-Aktivierung gestartet");
     startTime_System = millis();
     stopTime_System = startTime_System + 3000;
     countdown = true;
@@ -164,14 +164,14 @@ void roomTemp() {
     Serial.print("Luftfeuchtigkeit: ");
     Serial.print(luft);
     Serial.println(" %");
-    Serial.print("Temperatur: ");
+    Serial.print("Raum-Temperatur: ");
     Serial.print(temp);
     Serial.println(" Grad Celsius");
 }
 
 void kettleState() {
     socketClient.emit(UPDATE_KETTLE_ACTIVE_STATE, "false");
-    Serial.println("Kettle aus");
+    Serial.println("Wasserkocher ist aus");
     kettleCountdown = false;
 }
 
