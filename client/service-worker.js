@@ -18,6 +18,7 @@ self.addEventListener('notificationclick', evt => {
     case 'close':
       evt.notification.close()
       break
+
     case 'stop_alarm':
       evt.notification.close()
       evt.waitUntil(
@@ -28,6 +29,7 @@ self.addEventListener('notificationclick', evt => {
         }).catch(_ => _),
       )
       break
+
     default:
       evt.notification.close()
       evt.waitUntil(

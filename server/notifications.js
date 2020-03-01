@@ -38,6 +38,15 @@ const subscriptionDB = {
     const data = JSON.stringify(db, null, 2)
     await fsPromise.writeFile(PATH_TO_SUBSCRIPTION_DB, data, 'utf8')
   },
+  async has(subscription) {
+    const data = await subscriptionDB.get()
+    return Object.keys(data).includes(subscription.endpoint)
+  },
+  async add(subscription) {
+    const prev = await subscriptionDB.get()
+    await subscriptionDB.set({ ...prev, [subscription.endpoint]: subscription })
+    return subscription.endpoint
+  },
   async remove(endpoint) {
     const { [endpoint]: _, ...rest } = await subscriptionDB.get()
     await subscriptionDB.set(rest)
@@ -46,15 +55,12 @@ const subscriptionDB = {
 
 export function attachListeners(socket) {
   socket.on(SERVER_ACTIONS.ADD_NOTIFICATION_SUBSCRIPTION, async (subscription, doneCallback) => {
-    const prev = await subscriptionDB.get()
-    await subscriptionDB.set({ ...prev, [subscription.endpoint]: subscription })
-
+    await subscriptionDB.add(subscription)
     doneCallback()
   })
 
   socket.on(SERVER_ACTIONS.REMOVE_NOTIFICATION_SUBSCRIPTION, async (subscription, doneCallback) => {
     await subscriptionDB.remove(subscription.endpoint)
-
     doneCallback()
   })
 
@@ -65,8 +71,7 @@ export function attachListeners(socket) {
   socket.on(
     SERVER_ACTIONS.REQUEST_NOTIFICATION_SUBSCRIPTION_STATE,
     async (subscription, doneCallback) => {
-      const subscriptions = await subscriptionDB.get()
-      const exists = Object.keys(subscriptions).includes(subscription.endpoint)
+      const exists = await subscriptionDB.has(subscription)
       doneCallback(exists)
     },
   )

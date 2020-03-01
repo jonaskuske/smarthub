@@ -67,9 +67,10 @@ if (isProd) {
 }
 
 function handleSmarthubConnection(socket) {
-  // Emit current state to so client can set its initial state
+  // Emit current state so client can set its initial state
   socket.emit(SMARTHUB_UPDATES.ROOT, state.state)
 
+  // Attach listeners for push notification service
   notificationService.attachListeners(socket)
 
   // Forward emitted controller actions to the controller
@@ -79,6 +80,7 @@ function handleSmarthubConnection(socket) {
 }
 
 function handleControllerConnection(socket) {
+  // Add the controller to a Socket.IO room so we can later target all controllers
   socket.join(CONTROLLER_ROOM, () => {
     state.updateController({ online: true })
 
