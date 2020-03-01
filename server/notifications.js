@@ -22,7 +22,7 @@ if (!fs.existsSync(PATH_TO_KEY_STORAGE)) {
 }
 
 const vapidKeys = require(PATH_TO_KEY_STORAGE)
-webpush.setVapidDetails(homepage, vapidKeys.publicKey, vapidKeys.privateKey)
+webpush.setVapidDetails(VAPID_SUBJECT, vapidKeys.publicKey, vapidKeys.privateKey)
 
 if (!fs.existsSync(PATH_TO_SUBSCRIPTION_DB)) {
   console.log(chalk`\nCreating subscription DB at:\n{underline ${PATH_TO_SUBSCRIPTION_DB}}`)
