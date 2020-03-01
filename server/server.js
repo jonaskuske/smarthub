@@ -82,9 +82,15 @@ function handleSmarthubConnection(socket) {
 function handleControllerConnection(socket) {
   // Add the controller to a Socket.IO room so we can later target all controllers
   socket.join(CONTROLLER_ROOM, () => {
-    state.updateController({ online: true })
+    state.updateController({ online: true, connectionId: socket.id })
 
-    socket.on('disconnect', () => state.updateController({ online: false }))
+    socket.on('disconnect', () => {
+      // Abort if connection has already changed
+      // (because controller re-connected and "disconnect" event is delayed)
+      if (state.state.controller.connectionId !== socket.id) return
+
+      state.updateController({ online: false })
+    })
 
     socket.on(SERVER_UPDATES.ROOM_TEMP, temperature => state.updateRoom({ temperature }))
     socket.on(SERVER_UPDATES.ROOM_HUMIDITY, humidity => state.updateRoom({ humidity }))
