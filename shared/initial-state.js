@@ -23,5 +23,5 @@ const devices = [
 export const getInitialState = () => ({
   controller: { online: false, connectionId: null },
   room: { temperature: null, humidity: null },
-  devices: Object.fromEntries(devices.map(device => [device.name, { ...device }])),
+  devices: Object.fromEntries(devices.map((device) => [device.name, { ...device }])),
 })

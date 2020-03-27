@@ -16,7 +16,7 @@ import {
 } from '../shared/event-types'
 
 const isProd = process.env.NODE_ENV === 'production'
-const fromRoot = rootPath => path.resolve(__dirname, '../', rootPath)
+const fromRoot = (rootPath) => path.resolve(__dirname, '../', rootPath)
 const info = console.log
 
 const PORT = Number(process.env.PORT) || 8080
@@ -92,14 +92,14 @@ function handleControllerConnection(socket) {
       state.updateController({ online: false })
     })
 
-    socket.on(SERVER_UPDATES.ROOM_TEMP, temperature => state.updateRoom({ temperature }))
-    socket.on(SERVER_UPDATES.ROOM_HUMIDITY, humidity => state.updateRoom({ humidity }))
+    socket.on(SERVER_UPDATES.ROOM_TEMP, (temperature) => state.updateRoom({ temperature }))
+    socket.on(SERVER_UPDATES.ROOM_HUMIDITY, (humidity) => state.updateRoom({ humidity }))
 
-    socket.on(SERVER_UPDATES.ALARM_SILENT_MODE_STATE, silentMode => {
+    socket.on(SERVER_UPDATES.ALARM_SILENT_MODE_STATE, (silentMode) => {
       state.updateDevice('Alarmanlage', { silentMode })
     })
 
-    socket.on(SERVER_UPDATES.ALARM_STATE, async alarmState => {
+    socket.on(SERVER_UPDATES.ALARM_STATE, async (alarmState) => {
       const deviceName = 'Alarmanlage'
       state.updateDevice(deviceName, { state: alarmState })
 
@@ -117,10 +117,10 @@ function handleControllerConnection(socket) {
       }
     })
 
-    socket.on(SERVER_UPDATES.KETTLE_TEMP, temperature => {
+    socket.on(SERVER_UPDATES.KETTLE_TEMP, (temperature) => {
       state.updateDevice('Wasserkocher', { temperature })
     })
-    socket.on(SERVER_UPDATES.KETTLE_ACTIVE_STATE, active => {
+    socket.on(SERVER_UPDATES.KETTLE_ACTIVE_STATE, (active) => {
       state.updateDevice('Wasserkocher', { active })
     })
   })
@@ -128,7 +128,7 @@ function handleControllerConnection(socket) {
 
 smarthubNamespace.on('connection', handleSmarthubConnection)
 
-io.on('connection', socket => {
+io.on('connection', (socket) => {
   socket.on(REGISTER_CONTROLLER, () => handleControllerConnection(socket))
 })
 

@@ -57,10 +57,10 @@ export default {
       return serverState
     },
     ringingAlarmDevice() {
-      const isAlarmDevice = device => device.type === DEVICE_ALARM
+      const isAlarmDevice = (device) => device.type === DEVICE_ALARM
       const alarmDevices = Object.values(serverState.devices).filter(isAlarmDevice)
 
-      return alarmDevices.find(device => device.data.state === 'ringing')
+      return alarmDevices.find((device) => device.data.state === 'ringing')
     },
   },
   created() {

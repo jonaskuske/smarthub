@@ -3,8 +3,8 @@
     <h1 class="font-bold text-2xl text-center mb-2">{{ device.name }}</h1>
 
     <div class="w-10/12 relative">
-      <CircleChart :value="isOnline ? timerPercent : 0" style="color: #FF7272" />
-      <div class="absolute flex justify-between" style="top: 68%; left: 9%; right: 9%">
+      <CircleChart :value="isOnline ? timerPercent : 0" style="color: #ff7272;" />
+      <div class="absolute flex justify-between" style="top: 68%; left: 9%; right: 9%;">
         <span class="absolute left-0 transform -translate-x-1/2">{{ startTemp.toFixed() }}°C</span>
         <span class="absolute right-0 transform translate-x-1/2">100°C</span>
       </div>

@@ -7,7 +7,7 @@ const plugins = {
 const pluginsProduction = {
   '@fullhuman/postcss-purgecss': {
     content: ['./client/**/*.html', './client/**/*.vue'],
-    defaultExtractor: content => content.match(/[\w-/:.]+(?<!:)/g) || [],
+    defaultExtractor: (content) => content.match(/[\w-/:.]+(?<!:)/g) || [],
   },
 }
 

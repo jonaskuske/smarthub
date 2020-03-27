@@ -34,9 +34,9 @@
     "chalk": "^3.0.0",
     "default-gateway": "^5.0.5",
     "eslint": "^6.8.0",
-    "eslint-config-prettier": "^6.10.0",
+    "eslint-config-prettier": "^6.10.1",
     "eslint-plugin-prettier": "^3.1.2",
-    "eslint-plugin-vue": "^6.2.1",
+    "eslint-plugin-vue": "^6.2.2",
     "http-proxy-middleware": "^1.0.1",
     "lint-staged": "^10.0.8",
     "nodemon": "^2.0.2",
@@ -45,7 +45,7 @@
     "parcel-plugin-clean-dist": "0.0.6",
     "parcel-plugin-static-files-copy": "^2.3.1",
     "postcss-import": "^12.0.1",
-    "prettier": "^1.19.1",
+    "prettier": "^2.0.2",
     "tailwindcss": "^1.2.0",
     "tailwindcss-aspect-ratio": "^3.0.0",
     "tailwindcss-interaction-variants": "^3.1.0",
@@ -70,7 +70,8 @@
     "singleQuote": true,
     "trailingComma": "all",
     "printWidth": 100,
-    "tabWidth": 2
+    "tabWidth": 2,
+    "endOfLine": "auto"
   },
   "eslintConfig": {
     "root": true,

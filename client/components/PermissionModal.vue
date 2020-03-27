@@ -42,7 +42,7 @@ export default {
   components: { NotificationGraphic, PrimaryButton },
   methods: {
     requestNotifications() {
-      Notification.requestPermission().then(result => {
+      Notification.requestPermission().then((result) => {
         notificationState.permission = result
         if (result === 'granted') this.$emit('granted')
         if (result === 'denied') this.$emit('close')

@@ -13,7 +13,7 @@ export function emitToController(action, ...data) {
   if (!Object.values(CONTROLLER_ACTIONS).includes(action)) throw Error(`Unknown action: ${action}`)
 
   let markAsDone
-  const donePromise = new Promise(resolve => (markAsDone = resolve))
+  const donePromise = new Promise((resolve) => (markAsDone = resolve))
 
   socketClient.emit(action, ...data, markAsDone)
 
@@ -24,25 +24,25 @@ export function emitToServer(action, ...data) {
   if (!Object.values(SERVER_ACTIONS).includes(action)) throw Error(`Unknown action: ${action}`)
 
   let markAsDone
-  const donePromise = new Promise(resolve => (markAsDone = resolve))
+  const donePromise = new Promise((resolve) => (markAsDone = resolve))
 
   socketClient.emit(action, ...data, markAsDone)
 
   return donePromise
 }
 
-socketClient.on(SMARTHUB_UPDATES.ROOT, nextState => {
+socketClient.on(SMARTHUB_UPDATES.ROOT, (nextState) => {
   Object.assign(serverState, nextState)
 })
 
-socketClient.on(SMARTHUB_UPDATES.ROOM, roomData => {
+socketClient.on(SMARTHUB_UPDATES.ROOM, (roomData) => {
   serverState.room = roomData
 })
 
-socketClient.on(SMARTHUB_UPDATES.DEVICE, deviceData => {
+socketClient.on(SMARTHUB_UPDATES.DEVICE, (deviceData) => {
   serverState.devices[deviceData.name] = deviceData
 })
 
-socketClient.on(SMARTHUB_UPDATES.CONTROLLER, controllerData => {
+socketClient.on(SMARTHUB_UPDATES.CONTROLLER, (controllerData) => {
   serverState.controller = controllerData
 })

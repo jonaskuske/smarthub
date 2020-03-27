@@ -6,7 +6,7 @@ import { SERVER_ACTIONS } from '../shared/event-types'
 import { homepage } from '../package.json'
 
 const info = console.log
-const fromRoot = rootPath => path.resolve(__dirname, '../', rootPath)
+const fromRoot = (rootPath) => path.resolve(__dirname, '../', rootPath)
 
 const PATH_TO_SUBSCRIPTION_DB = fromRoot('data/subscriptions.json')
 const PATH_TO_KEY_STORAGE = fromRoot('data/vapid-keys.json')
@@ -64,7 +64,7 @@ export function attachListeners(socket) {
     doneCallback()
   })
 
-  socket.on(SERVER_ACTIONS.REQUEST_NOTIFICATION_PUBLIC_KEY, doneCallback => {
+  socket.on(SERVER_ACTIONS.REQUEST_NOTIFICATION_PUBLIC_KEY, (doneCallback) => {
     doneCallback(vapidKeys.publicKey)
   })
 
@@ -84,7 +84,7 @@ export async function sendNotification(message) {
   const toPrune = []
 
   await Promise.all(
-    Object.values(subscriptions).map(subscription =>
+    Object.values(subscriptions).map((subscription) =>
       webpush.sendNotification(subscription, payload).catch(() => {
         toPrune.push(subscription.endpoint)
       }),

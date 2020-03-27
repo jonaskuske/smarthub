@@ -15,11 +15,11 @@ Vue.mixin({ components: iconComponents })
 new Vue({
   el: '#root',
   router,
-  render: h => h(App),
+  render: (h) => h(App),
 })
 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker
     .register('./service-worker.js')
-    .catch(err => console.log('Service Worker konnte nicht registriert werden', err))
+    .catch((err) => console.log('Service Worker konnte nicht registriert werden', err))
 }

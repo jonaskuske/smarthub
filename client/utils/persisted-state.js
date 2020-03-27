@@ -12,6 +12,6 @@ export const persistedState = Vue.observable(
 
 new Vue().$watch(
   () => persistedState,
-  nextState => localStorage.setItem(PERSIST_KEY, JSON.stringify(nextState)),
+  (nextState) => localStorage.setItem(PERSIST_KEY, JSON.stringify(nextState)),
   { deep: true, immediate: true },
 )
