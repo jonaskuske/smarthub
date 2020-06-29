@@ -11,6 +11,41 @@
 <br>
 <br>
 
+## Instructions
+
+### Install dependencies
+
+```bash
+> npm install
+```
+
+### Development
+
+```bash
+> npm run serve
+```
+
+> This will run the Node server with auto-restart (using `nodemon`) and the client Vue app (using Parcel) in parallel.  
+> Access at [localhost:8080](http://localhost:8080).
+
+### Production
+
+First, compile the client app:
+
+```bash
+> npm run build
+```
+
+Then, start the server and make sure `NODE_ENV` is set to `production`:
+
+```bash
+> NODE_ENV=production npm start
+```
+
+<br>
+<br>
+<br>
+
 ### Built by
 
 - [Jonas Kuske](https://github.com/jonaskuske)
