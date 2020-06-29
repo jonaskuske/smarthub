@@ -13,6 +13,8 @@ const PATH_TO_KEY_STORAGE = fromRoot('data/vapid-keys.json')
 
 const VAPID_SUBJECT = process.env.VAPID_SUBJECT || homepage
 
+// If we haven't created VAPID (Voluntary Application Server Identification) keys yet,
+// (i.e. on first run), generate new keys and store them in vapid-keys.json
 if (!fs.existsSync(PATH_TO_KEY_STORAGE)) {
   info(chalk`Generating VAPID keys at:\n{underline ${PATH_TO_KEY_STORAGE}}\n`)
   fs.writeFileSync(PATH_TO_KEY_STORAGE, JSON.stringify(webpush.generateVAPIDKeys()), 'utf8')
@@ -24,6 +26,7 @@ if (!fs.existsSync(PATH_TO_KEY_STORAGE)) {
 const vapidKeys = require(PATH_TO_KEY_STORAGE)
 webpush.setVapidDetails(VAPID_SUBJECT, vapidKeys.publicKey, vapidKeys.privateKey)
 
+// If it doesn't exist yet, create the empty JSON where we'll store all subscriptions
 if (!fs.existsSync(PATH_TO_SUBSCRIPTION_DB)) {
   console.log(chalk`\nCreating subscription DB at:\n{underline ${PATH_TO_SUBSCRIPTION_DB}}`)
   fs.writeFileSync(PATH_TO_SUBSCRIPTION_DB, '{}', 'utf8')
@@ -54,20 +57,23 @@ const subscriptionDB = {
 }
 
 export function attachListeners(socket) {
+  // Endpoints/socket events to add or remove subscriptions from our JSON file
   socket.on(SERVER_ACTIONS.ADD_NOTIFICATION_SUBSCRIPTION, async (subscription, doneCallback) => {
     await subscriptionDB.add(subscription)
     doneCallback()
   })
-
   socket.on(SERVER_ACTIONS.REMOVE_NOTIFICATION_SUBSCRIPTION, async (subscription, doneCallback) => {
     await subscriptionDB.remove(subscription.endpoint)
     doneCallback()
   })
 
+  // Allow clients to request the public key, which they need to create a new subscription
   socket.on(SERVER_ACTIONS.REQUEST_NOTIFICATION_PUBLIC_KEY, (doneCallback) => {
     doneCallback(vapidKeys.publicKey)
   })
 
+  // Let clients check whether their subscription is known to the server.
+  // This allows clients to re-add their existing subscription if we ever delete the JSON file
   socket.on(
     SERVER_ACTIONS.REQUEST_NOTIFICATION_SUBSCRIPTION_STATE,
     async (subscription, doneCallback) => {
@@ -77,6 +83,9 @@ export function attachListeners(socket) {
   )
 }
 
+/**
+ * Sends a notification to all subscriptions that we have stored in our JSON file
+ */
 export async function sendNotification(message) {
   const payload = JSON.stringify(message)
   const subscriptions = await subscriptionDB.get()
@@ -86,6 +95,9 @@ export async function sendNotification(message) {
   await Promise.all(
     Object.values(subscriptions).map((subscription) =>
       webpush.sendNotification(subscription, payload).catch(() => {
+        // If an endpoint is not reachable, we'll mark it here and remove it from
+        // the DB later. This is probably bad but it keeps the JSON file tidy for now.
+        // ¯\_(ツ)_/¯
         toPrune.push(subscription.endpoint)
       }),
     ),
