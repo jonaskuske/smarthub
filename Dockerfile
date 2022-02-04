@@ -13,7 +13,7 @@ USER node
 COPY ./package.json ./package-lock.json ./
 COPY --from=build /usr/src/app/node_modules ./node-modules
 RUN npm ci --prod && npm cache clean --force
-COPY . .
+COPY --chown=node:node . .
 COPY --from=build /usr/src/app/client/dist ./client/dist
 ARG VAPID_SUBJECT=${VAPID_SUBJECT}
 ENV NODE_ENV production
