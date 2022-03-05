@@ -6,8 +6,6 @@ import history from 'connect-history-api-fallback'
 import * as socketIo from 'socket.io'
 import { State } from './state.mjs'
 import * as notificationService from './notifications.mjs'
-import { createProxyMiddleware } from 'http-proxy-middleware'
-import * as ipAddress from './ip-address.mjs'
 import chalk from 'chalk-template'
 import {
   REGISTER_CONTROLLER,
@@ -66,6 +64,7 @@ if (isProd) {
     }),
   )
 } else {
+  const { createProxyMiddleware } = await import('http-proxy-middleware')
   // In dev, proxy to localhost:8081 where the Parcel development server is running.
   const proxyOptions = { target: 'http://localhost:8081', changeOrigin: true, logLevel: 'warn' }
   app.use(createProxyMiddleware(proxyOptions))
@@ -137,13 +136,13 @@ io.on('connection', (socket) => {
   socket.on(REGISTER_CONTROLLER, () => handleControllerConnection(socket))
 })
 
-server.listen(PORT, () => {
+server.listen(PORT, async () => {
   if (isProd) {
     info(chalk`Server running on port {bold ${PORT}}.`)
   } else {
     info(chalk`\nApp is running at {underline http://localhost:${PORT}}.`)
 
-    const ip = ipAddress.local()
+    const ip = (await import('./ip-address.mjs')).local()
     if (ip) info(chalk`Controllers can connect to {bold ${ip}} on port {bold ${PORT}}.\n`)
     else info(`Controllers can connect to your local IP (failed to auto-detect) on port ${PORT}.`)
   }
