@@ -1,19 +1,22 @@
 import path from 'path'
+import { fileURLToPath } from 'url'
 import http from 'http'
 import express from 'express'
 import history from 'connect-history-api-fallback'
-import socketIo from 'socket.io'
-import { State } from './state'
-import * as notificationService from './notifications'
+import * as socketIo from 'socket.io'
+import { State } from './state.mjs'
+import * as notificationService from './notifications.mjs'
 import { createProxyMiddleware } from 'http-proxy-middleware'
-import * as ipAddress from './ip-address'
-import chalk from 'chalk'
+import * as ipAddress from './ip-address.mjs'
+import chalk from 'chalk-template'
 import {
   REGISTER_CONTROLLER,
   CONTROLLER_ACTIONS,
   SERVER_UPDATES,
   SMARTHUB_UPDATES,
-} from '../shared/event-types'
+} from '../shared/event-types.mjs'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 const isProd = process.env.NODE_ENV === 'production'
 const fromRoot = (rootPath) => path.resolve(__dirname, '../', rootPath)
@@ -24,7 +27,9 @@ const CONTROLLER_ROOM = 'controller'
 
 const app = express()
 const server = http.createServer(app)
-const io = socketIo(server)
+const io = new socketIo.Server(server, {
+  allowEIO3: true, // controllers use the old socket.io v2 protocol
+})
 
 const smarthubNamespace = io.of('/smarthub')
 
@@ -81,48 +86,48 @@ function handleSmarthubConnection(socket) {
 
 function handleControllerConnection(socket) {
   // Add the controller to a Socket.IO room so we can later target all controllers
-  socket.join(CONTROLLER_ROOM, () => {
-    state.updateController({ online: true, connectionId: socket.id })
+  socket.join(CONTROLLER_ROOM)
 
-    socket.on('disconnect', () => {
-      // Abort if connection has already changed
-      // (because controller re-connected and "disconnect" event is delayed)
-      if (state.state.controller.connectionId !== socket.id) return
+  state.updateController({ online: true, connectionId: socket.id })
 
-      state.updateController({ online: false })
-    })
+  socket.on('disconnect', () => {
+    // Abort if connection has already changed
+    // (because controller re-connected and "disconnect" event is delayed)
+    if (state.state.controller.connectionId !== socket.id) return
 
-    socket.on(SERVER_UPDATES.ROOM_TEMP, (temperature) => state.updateRoom({ temperature }))
-    socket.on(SERVER_UPDATES.ROOM_HUMIDITY, (humidity) => state.updateRoom({ humidity }))
+    state.updateController({ online: false })
+  })
 
-    socket.on(SERVER_UPDATES.ALARM_SILENT_MODE_STATE, (silentMode) => {
-      state.updateDevice('Alarmanlage', { silentMode })
-    })
+  socket.on(SERVER_UPDATES.ROOM_TEMP, (temperature) => state.updateRoom({ temperature }))
+  socket.on(SERVER_UPDATES.ROOM_HUMIDITY, (humidity) => state.updateRoom({ humidity }))
 
-    socket.on(SERVER_UPDATES.ALARM_STATE, async (alarmState) => {
-      const deviceName = 'Alarmanlage'
-      state.updateDevice(deviceName, { state: alarmState })
+  socket.on(SERVER_UPDATES.ALARM_SILENT_MODE_STATE, (silentMode) => {
+    state.updateDevice('Alarmanlage', { silentMode })
+  })
 
-      if (alarmState === 'ringing') {
-        notificationService.sendNotification({
-          title: 'Alarm ausgelöst!',
-          body: 'Die Alarmanlage hat eine Bewegung registriert und wurde ausgelöst. Warst das du?',
-          image: '/images/door-image.png',
-          actions: [
-            { action: 'stop_alarm', title: 'Abschalten' },
-            { action: 'close', title: 'Schließen' },
-          ],
-          data: { device: deviceName },
-        })
-      }
-    })
+  socket.on(SERVER_UPDATES.ALARM_STATE, async (alarmState) => {
+    const deviceName = 'Alarmanlage'
+    state.updateDevice(deviceName, { state: alarmState })
 
-    socket.on(SERVER_UPDATES.KETTLE_TEMP, (temperature) => {
-      state.updateDevice('Wasserkocher', { temperature })
-    })
-    socket.on(SERVER_UPDATES.KETTLE_ACTIVE_STATE, (active) => {
-      state.updateDevice('Wasserkocher', { active })
-    })
+    if (alarmState === 'ringing') {
+      notificationService.sendNotification({
+        title: 'Alarm ausgelöst!',
+        body: 'Die Alarmanlage hat eine Bewegung registriert und wurde ausgelöst. Warst das du?',
+        image: '/images/door-image.png',
+        actions: [
+          { action: 'stop_alarm', title: 'Abschalten' },
+          { action: 'close', title: 'Schließen' },
+        ],
+        data: { device: deviceName },
+      })
+    }
+  })
+
+  socket.on(SERVER_UPDATES.KETTLE_TEMP, (temperature) => {
+    state.updateDevice('Wasserkocher', { temperature })
+  })
+  socket.on(SERVER_UPDATES.KETTLE_ACTIVE_STATE, (active) => {
+    state.updateDevice('Wasserkocher', { active })
   })
 }
 

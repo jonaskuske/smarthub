@@ -1,8 +1,8 @@
-import Vue from 'vue'
+import { reactive } from 'vue'
 import { emitToServer, wait } from './'
-import { SERVER_ACTIONS } from '../../shared/event-types'
+import { SERVER_ACTIONS } from '../../shared/event-types.mjs'
 
-export const notificationState = Vue.observable({
+export const notificationState = reactive({
   enabled: false,
   permission: 'Notification' in window && Notification.permission,
   supported: 'serviceWorker' in navigator && 'Notification' in window,

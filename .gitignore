@@ -38,6 +38,7 @@ dist
 .dev
 controller/config.h
 .cache
+.parcel-cache
 
 data/*
 !data/.gitkeep

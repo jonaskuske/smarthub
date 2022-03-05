@@ -1,8 +1,8 @@
 <template>
-  <main class="container pt-10 h-full flex flex-col">
-    <h1 class="font-bold text-2xl mb-16">Einstellungen</h1>
+  <main class="container flex flex-col h-full pt-10">
+    <h1 class="mb-16 text-2xl font-bold">Einstellungen</h1>
 
-    <div class="flex justify-between items-baseline border-b pb-3 mb-4">
+    <div class="flex items-baseline justify-between pb-3 mb-4 border-b">
       <label for="notifs" :class="{ 'opacity-50': settingDisabled }">
         Geräte-Benachrichtigungen
         <span class="truncate">
@@ -10,7 +10,7 @@
           <template v-else-if="notAllowed">(in Browser-Einstellungen blockiert)</template>
         </span>
       </label>
-      <div class="flex-shrink-0 self-center">
+      <div class="self-center shrink-0">
         <ToggleButton
           id="notifs"
           v-model="toggleState"
@@ -20,17 +20,13 @@
       </div>
     </div>
 
-    <div class="flex justify-between items-baseline border-b pb-3 mb-4">
-      <label for="name">
-        Name ändern
-      </label>
-      <input v-model="name" class="text-right text-lightgray font-bold focus:outline-none" />
+    <div class="flex items-baseline justify-between pb-3 mb-4 border-b">
+      <label for="name"> Name ändern </label>
+      <input v-model="name" class="font-bold text-right text-lightgray focus:outline-none" />
     </div>
 
-    <footer class="flex justify-center mt-auto p-4 flex-shrink-0">
-      <PrimaryButton as="router-link" to="/">
-        Zurück zur Geräteliste
-      </PrimaryButton>
+    <footer class="flex justify-center p-4 mt-auto shrink-0">
+      <PrimaryButton as="router-link" to="/"> Zurück zur Geräteliste </PrimaryButton>
     </footer>
 
     <PermissionModal

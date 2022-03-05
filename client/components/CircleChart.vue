@@ -1,7 +1,7 @@
 <template>
-  <svg viewBox="0 0 36 36" style="transform: rotate(-108deg);" class="origin-center" fill="none">
+  <svg viewBox="0 0 36 36" style="transform: rotate(-108deg)" class="origin-center" fill="none">
     <path
-      class="stroke-current text-gray-300"
+      class="text-gray-300 stroke-current"
       stroke-dasharray="60, 100"
       stroke-linecap="round"
       stroke-width="2"

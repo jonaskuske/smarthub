@@ -1,5 +1,5 @@
-import { getInitialState } from '../shared/initial-state'
-import { SMARTHUB_UPDATES } from '../shared/event-types'
+import { getInitialState } from '../shared/initial-state.mjs'
+import { SMARTHUB_UPDATES } from '../shared/event-types.mjs'
 
 export class State {
   /** @param {{ onUpdate: (event: string, data?: any) => void) }} */

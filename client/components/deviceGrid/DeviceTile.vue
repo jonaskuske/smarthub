@@ -6,7 +6,7 @@
 import AlarmTileVue from './AlarmTile.vue'
 import ControllerTileVue from './ControllerTile.vue'
 import KettleTileVue from './KettleTile.vue'
-import * as DEVICE_TYPES from '../../../shared/device-types'
+import * as DEVICE_TYPES from '../../../shared/device-types.mjs'
 
 export default {
   props: {

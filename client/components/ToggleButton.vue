@@ -1,5 +1,5 @@
 <template>
-  <label class="relative inline-block" style="width: 30px; height: 18px;">
+  <label class="relative inline-block" style="width: 30px; height: 18px">
     <input
       v-bind="$attrs"
       class="invisible"
@@ -8,7 +8,7 @@
       @change="handleChange"
     />
     <span
-      class="slider round absolute cursor-pointer inset-0 rounded-full duration-300 transition bg-gray-400"
+      class="absolute inset-0 transition duration-300 bg-gray-400 rounded-full cursor-pointer slider round"
     />
   </label>
 </template>

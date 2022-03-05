@@ -1,12 +1,12 @@
 <template>
-  <main class="h-full flex flex-col">
-    <div class="bg-white shadow-lg rounded-b-xl z-10">
+  <main class="flex flex-col h-full">
+    <div class="z-10 bg-white shadow-lg rounded-b-xl">
       <div class="container p-8">
         <div class="relative">
           <router-link
             id="app_settings"
             to="/settings"
-            class="absolute top-0 right-0 text-lightgray transform transition-transform duration-300 ease-in-out hover:rotate-90 focus:rotate-90 focus:text-lightblue focus:outline-none"
+            class="absolute top-0 right-0 transition-transform duration-300 ease-in-out text-lightgray hover:rotate-90 focus:rotate-90 focus:text-lightblue focus:outline-none"
           >
             <span class="sr-only">Einstellungen</span>
             <Cog aria-hidden="true" />
@@ -15,19 +15,19 @@
           <p class="mb-3">
             <time>{{ currentTime }}</time>
           </p>
-          <p class="text-3xl mb-10">
+          <p class="mb-10 text-3xl">
             Willkommen <span class="font-bold">{{ persistedState.name }}!</span>
           </p>
           <StatusBar>
-            <p v-if="!serverState.controller.online" class="text-lightblue w-full">
-              <WifiOff class="inline align-text-top mr-1 w-6" /> Der Controller ist offline.
+            <p v-if="!serverState.controller.online" class="w-full text-lightblue">
+              <WifiOff class="inline w-6 mr-1 align-text-top" /> Der Controller ist offline.
             </p>
             <p
               v-else-if="ringingAlarmDevice"
-              class="text-warn w-full cursor-pointer hover:underline"
+              class="w-full cursor-pointer text-warn hover:underline"
             >
               <router-link :to="`/devices/${ringingAlarmDevice.name}`">
-                <Warn class="inline align-text-top mr-1 w-6" /> Achtung! Alarm ausgelöst!
+                <Warn class="inline w-6 mr-1 align-text-top" /> Achtung! Alarm ausgelöst!
               </router-link>
             </p>
           </StatusBar>
@@ -35,7 +35,7 @@
       </div>
     </div>
 
-    <div class="h-full container">
+    <div class="container h-full">
       <router-view />
     </div>
   </main>
@@ -44,7 +44,7 @@
 <script>
 import StatusBar from '../components/StatusBar'
 import { formatTime, persistedState, serverState } from '../utils'
-import { DEVICE_ALARM } from '../../shared/device-types'
+import { DEVICE_ALARM } from '../../shared/device-types.mjs'
 
 export default {
   components: { StatusBar },

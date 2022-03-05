@@ -27,7 +27,7 @@
           </template>
         </span>
       </label>
-      <div class="flex-shrink-">
+      <div class="shrink">
         <ToggleButton
           id="alarm_notifications_enabled"
           v-model="notificationToggleState"
@@ -66,7 +66,7 @@ import {
   subscribeToNotifications,
   unsubscribeFromNotifications,
 } from '../../utils'
-import { CONTROLLER_ACTIONS } from '../../../shared/event-types'
+import { CONTROLLER_ACTIONS } from '../../../shared/event-types.mjs'
 
 export default {
   components: { ToggleButton },

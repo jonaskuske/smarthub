@@ -1,7 +1,7 @@
 <template>
   <div>
     <BaseTile :device="device" :status="isOnline ? 'Online' : 'Offline'">
-      <div class="w-3 h-3 rounded-full" :class="isOnline ? 'bg-green-600' : 'bg-red-600'" />
+      <div class="w-3 h-3 rounded-full" :class="isOnline ? 'bg-emerald-600' : 'bg-red-600'" />
     </BaseTile>
   </div>
 </template>

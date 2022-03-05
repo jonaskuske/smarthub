@@ -1,12 +1,16 @@
 import path from 'path'
+import { fileURLToPath } from 'url'
 import fs, { promises as fsPromise } from 'fs'
 import webpush from 'web-push'
-import chalk from 'chalk'
-import { SERVER_ACTIONS } from '../shared/event-types'
-import { homepage } from '../package.json'
+import chalk from 'chalk-template'
+import { SERVER_ACTIONS } from '../shared/event-types.mjs'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 const info = console.log
 const fromRoot = (rootPath) => path.resolve(__dirname, '../', rootPath)
+
+const { homepage } = JSON.parse(fs.readFileSync(fromRoot('package.json')))
 
 const PATH_TO_SUBSCRIPTION_DB = fromRoot('data/subscriptions.json')
 const PATH_TO_KEY_STORAGE = fromRoot('data/vapid-keys.json')
@@ -23,7 +27,7 @@ if (!fs.existsSync(PATH_TO_KEY_STORAGE)) {
   info(chalk`(set through {bold "homepage"} in package.json or {bold VAPID_SUBJECT} env variable)`)
 }
 
-const vapidKeys = require(PATH_TO_KEY_STORAGE)
+const vapidKeys = JSON.parse(fs.readFileSync(PATH_TO_KEY_STORAGE))
 webpush.setVapidDetails(VAPID_SUBJECT, vapidKeys.publicKey, vapidKeys.privateKey)
 
 // If it doesn't exist yet, create the empty JSON where we'll store all subscriptions

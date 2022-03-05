@@ -1,5 +1,5 @@
-import { CONTROLLER_ACTIONS } from '../shared/event-types'
-import appIcon from './assets/icons/android-chrome-512x512.png'
+import { CONTROLLER_ACTIONS } from '../shared/event-types.mjs'
+import appIcon from 'url:./assets/icons/android-chrome-512x512.png'
 
 self.addEventListener('install', (evt) => {
   if (self.skipWaiting) evt.waitUntil(self.skipWaiting())

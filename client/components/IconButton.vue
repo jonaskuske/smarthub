@@ -1,8 +1,7 @@
 <template>
   <button
-    class="w-12 h-12 text-xl rounded-full shadow-md flex items-center justify-center focus:outline-none disabled:opacity-50 disabled:grayscale disabled:cursor-default"
+    class="flex items-center justify-center w-12 h-12 text-xl rounded-full shadow-md focus:outline-none disabled:opacity-50 disabled:grayscale disabled:cursor-default"
     v-bind="$attrs"
-    v-on="$listeners"
   >
     <slot />
   </button>

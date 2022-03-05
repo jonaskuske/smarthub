@@ -1,15 +1,15 @@
 <template>
   <div class="flex flex-col items-center">
-    <h1 class="font-bold text-2xl text-center mb-2">{{ device.name }}</h1>
+    <h1 class="mb-2 text-2xl font-bold text-center">{{ device.name }}</h1>
 
-    <div class="w-10/12 relative">
-      <CircleChart :value="isOnline ? timerPercent : 0" style="color: #ff7272;" />
-      <div class="absolute flex justify-between" style="top: 68%; left: 9%; right: 9%;">
-        <span class="absolute left-0 transform -translate-x-1/2">{{ startTemp.toFixed() }}°C</span>
-        <span class="absolute right-0 transform translate-x-1/2">100°C</span>
+    <div class="relative w-10/12">
+      <CircleChart :value="isOnline ? timerPercent : 0" style="color: #ff7272" />
+      <div class="absolute flex justify-between" style="top: 68%; left: 9%; right: 9%">
+        <span class="absolute left-0 -translate-x-1/2">{{ startTemp.toFixed() }}°C</span>
+        <span class="absolute right-0 translate-x-1/2">100°C</span>
       </div>
       <IconButton
-        class="absolute top-0 left-1/2 transform -translate-x-1/2 w-full h-full scale-70"
+        class="absolute top-0 left-1/2 -translate-x-1/2 !w-full !h-full scale-70"
         :disabled="isActive || !isOnline"
         @click="turnOn"
       >
@@ -30,7 +30,7 @@ import CircleChart from '../../components/CircleChart'
 import Fade from '../../components/Fade'
 import IconButton from '../../components/IconButton'
 import { emitToController, serverState } from '../../utils'
-import { CONTROLLER_ACTIONS } from '../../../shared/event-types'
+import { CONTROLLER_ACTIONS } from '../../../shared/event-types.mjs'
 
 const startTemp = serverState.room.temperature || 20
 

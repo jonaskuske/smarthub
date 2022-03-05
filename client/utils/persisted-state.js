@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { reactive, watch } from 'vue'
 const PERSIST_KEY = '_SMARTHUB_PERSISTED_STATE_'
 
 const initialPersistedState = {
@@ -6,12 +6,11 @@ const initialPersistedState = {
 }
 
 /** @type {typeof initialPersistedState} */
-export const persistedState = Vue.observable(
+export const persistedState = reactive(
   JSON.parse(localStorage.getItem(PERSIST_KEY)) || initialPersistedState,
 )
 
-new Vue().$watch(
-  () => persistedState,
-  (nextState) => localStorage.setItem(PERSIST_KEY, JSON.stringify(nextState)),
-  { deep: true, immediate: true },
-)
+watch(persistedState, (nextState) => localStorage.setItem(PERSIST_KEY, JSON.stringify(nextState)), {
+  deep: true,
+  immediate: true,
+})

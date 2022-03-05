@@ -1,25 +1,26 @@
-import Vue from 'vue'
+import { createApp, h } from 'vue'
 import './assets/styles/index.css'
 import App from './App.vue'
 import router from './router'
 import icons from './components/icons/*.vue'
 
-Vue.config.productionTip = false
-
 const iconComponents = Object.fromEntries(
   Object.entries(icons).map(([name, mod]) => [name, mod.default]),
 )
 
-Vue.mixin({ components: iconComponents })
-
-new Vue({
-  el: '#root',
+const app = createApp({
   router,
-  render: (h) => h(App),
+  render: () => h(App),
 })
+
+app.use(router)
+
+app.mixin({ components: iconComponents })
+
+app.mount('#root')
 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker
-    .register('./service-worker.js')
+    .register(new URL('./service-worker.js', import.meta.url), { type: 'module' })
     .catch((err) => console.log('Service Worker konnte nicht registriert werden', err))
 }

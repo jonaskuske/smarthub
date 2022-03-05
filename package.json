@@ -2,56 +2,57 @@
   "name": "smarthub",
   "homepage": "https://smarthub.jonaskuske.de",
   "version": "1.0.0",
-  "main": "server/index.js",
   "license": "UNLICENSED",
   "private": true,
   "scripts": {
-    "start": "node server/index.js",
-    "server:dev": "nodemon server/index.js --watch server --watch shared --quiet",
-    "client:dev": "parcel serve client/index.html -p 8081 -d client/.dev --log-level 2 ",
+    "start": "node server/server.mjs",
+    "server:dev": "nodemon server/server.mjs --watch server --watch shared --quiet",
+    "client:dev": "parcel serve client/index.html -p 8081 --hmr-port 8082 --dist-dir client/.dev --log-level warn",
     "serve": "run-p server:dev client:dev",
-    "build": "parcel build client/index.html -d client/dist --no-cache"
+    "build": "parcel build client/index.html --dist-dir client/dist --no-cache"
   },
   "browserslist": "Edge >= 17, Chrome >= 70, Firefox >= 65, Safari >= 11",
+  "alias": {
+    "buffer": false
+  },
   "dependencies": {
     "address": "^1.1.2",
-    "chalk": "^3.0.0",
     "connect-history-api-fallback": "^1.6.0",
-    "core-js": "^3.6.4",
-    "default-gateway": "^6.0.0",
-    "esm": "^3.2.25",
     "express": "^4.17.1",
-    "http-proxy-middleware": "^1.0.3",
-    "socket.io": "^2.4.0",
-    "socket.io-client": "^2.3.0",
-    "vue": "^2.6.11",
+    "socket.io": "^4.1.2",
+    "socket.io-client": "^4.1.2",
+    "vue": "^3.2.31",
     "vue-hot-reload-api": "^2.3.4",
-    "vue-router": "^3.1.6",
-    "web-push": "^3.4.3"
+    "vue-router": "^4.0.13"
   },
   "devDependencies": {
-    "@babel/core": "^7.9.0",
-    "@babel/preset-env": "^7.9.0",
-    "@fullhuman/postcss-purgecss": "^2.1.0",
-    "@vue/component-compiler-utils": "^3.1.1",
-    "autoprefixer": "^9.7.5",
-    "eslint": "^6.8.0",
-    "eslint-config-prettier": "^6.10.1",
-    "eslint-plugin-prettier": "^3.1.2",
-    "eslint-plugin-vue": "^6.2.2",
-    "lint-staged": "^10.0.9",
+    "@parcel/packager-raw-url": "^2.3.2",
+    "@parcel/packager-xml": "^2.3.2",
+    "@parcel/resolver-glob": "^2.3.2",
+    "@parcel/transformer-image": "^2.3.2",
+    "@parcel/transformer-vue": "^2.3.2",
+    "@parcel/transformer-webmanifest": "^2.3.2",
+    "@parcel/transformer-xml": "^2.3.2",
+    "address": "^1.1.2",
+    "autoprefixer": "^10.4.2",
+    "chalk-template": "^0.4.0",
+    "default-gateway": "^6.0.0",
+    "eslint": "^8.10.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-vue": "^8.5.0",
+    "http-proxy-middleware": "^2.0.0",
+    "lint-staged": "^12.3.4",
     "nodemon": "^2.0.2",
     "npm-run-all": "^4.1.5",
-    "parcel-bundler": "^1.12.4",
-    "parcel-plugin-clean-dist": "0.0.6",
-    "parcel-plugin-static-files-copy": "^2.3.1",
-    "postcss-import": "^12.0.1",
+    "parcel": "^2.3.2",
+    "parcel-reporter-static-files-copy": "^1.3.4",
     "prettier": "^2.0.2",
-    "tailwindcss": "^1.2.0",
+    "tailwindcss": "^3.0.23",
     "tailwindcss-aspect-ratio": "^3.0.0",
-    "tailwindcss-interaction-variants": "^3.1.1",
-    "tailwindcss-pseudo-elements": "^1.1.2",
-    "vue-template-compiler": "^2.6.11",
+    "tailwindcss-interaction-variants": "^5.0.0",
+    "tailwindcss-pseudo-elements": "^2.0.0",
+    "web-push": "^3.4.3",
     "yorkie": "^2.0.0"
   },
   "gitHooks": {
@@ -88,8 +89,7 @@
     "extends": [
       "eslint:recommended",
       "plugin:vue/recommended",
-      "plugin:prettier/recommended",
-      "prettier/vue"
+      "plugin:prettier/recommended"
     ],
     "rules": {
       "no-unused-vars": [
@@ -97,14 +97,9 @@
         {
           "ignoreRestSiblings": true
         }
-      ]
+      ],
+      "vue/multi-word-component-names": "off"
     }
-  },
-  "posthtml": {
-    "recognizeSelfClosing": true
-  },
-  "htmlnano": {
-    "minifySvg": false
   },
   "staticFiles": {
     "staticPath": "client/static"

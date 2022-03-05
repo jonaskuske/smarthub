@@ -1,15 +1,12 @@
-import Vue from 'vue'
-import Router from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 
-import Layout from './views/_Layout'
-import Device from './views/Device'
-import DeviceList from './views/DeviceList'
-import Settings from './views/Settings'
+import Layout from './views/_Layout.vue'
+import Device from './views/Device.vue'
+import DeviceList from './views/DeviceList.vue'
+import Settings from './views/Settings.vue'
 
-Vue.use(Router)
-
-const router = new Router({
-  mode: 'history',
+const router = createRouter({
+  history: createWebHistory(),
   routes: [
     {
       path: '/',
@@ -21,7 +18,7 @@ const router = new Router({
       ],
     },
     { path: '/settings', component: Settings },
-    { path: '*', redirect: '/' },
+    { path: '/:pathMatch(.*)', redirect: '/' },
   ],
 })
 

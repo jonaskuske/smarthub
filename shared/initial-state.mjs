@@ -1,4 +1,4 @@
-import * as DEVICE_TYPES from './device-types'
+import * as DEVICE_TYPES from './device-types.mjs'
 
 const devices = [
   {

@@ -1,13 +1,13 @@
-import Vue from 'vue'
+import { reactive } from 'vue'
 import io from 'socket.io-client'
-import { CONTROLLER_ACTIONS, SMARTHUB_UPDATES, SERVER_ACTIONS } from '../../shared/event-types'
-import { getInitialState } from '../../shared/initial-state'
+import { CONTROLLER_ACTIONS, SMARTHUB_UPDATES, SERVER_ACTIONS } from '../../shared/event-types.mjs'
+import { getInitialState } from '../../shared/initial-state.mjs'
 
 const { SOCKET_URL = '' } = process.env
 
 const socketClient = io(`${SOCKET_URL}/smarthub`)
 
-export const serverState = Vue.observable(getInitialState())
+export const serverState = reactive(getInitialState())
 
 export function emitToController(action, ...data) {
   if (!Object.values(CONTROLLER_ACTIONS).includes(action)) throw Error(`Unknown action: ${action}`)

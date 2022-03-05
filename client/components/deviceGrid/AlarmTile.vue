@@ -1,8 +1,10 @@
 <template>
-  <router-link tag="div" :to="`/devices/${device.name}`">
-    <BaseTile :device="device" :status="statusMessage">
-      <ToggleButton :value="isEnabled" :disabled="!isOnline" @change="handleChange" />
-    </BaseTile>
+  <router-link v-slot="{ navigate }" :to="`/devices/${device.name}`">
+    <div @click="navigate">
+      <BaseTile :device="device" :status="statusMessage">
+        <ToggleButton :value="isEnabled" :disabled="!isOnline" @change="handleChange" />
+      </BaseTile>
+    </div>
   </router-link>
 </template>
 
@@ -10,7 +12,7 @@
 import BaseTile from './_BaseTile'
 import ToggleButton from '../../components/ToggleButton.vue'
 import { emitToController, serverState } from '../../utils'
-import { CONTROLLER_ACTIONS } from '../../../shared/event-types'
+import { CONTROLLER_ACTIONS } from '../../../shared/event-types.mjs'
 
 export default {
   components: { BaseTile, ToggleButton },

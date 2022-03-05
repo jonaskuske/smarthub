@@ -1,6 +1,7 @@
 const { fontFamily } = require('tailwindcss/defaultTheme')
 
 module.exports = {
+  content: ['./client/**/*.html', './client/**/*.vue'],
   theme: {
     fontFamily: {
       ...fontFamily,
@@ -20,20 +21,9 @@ module.exports = {
       colors: { primary: '#6CAEFC', lightgray: '#868686', lightblue: '#6CAEFC', warn: '#FF7272' },
       fontSize: { base: '14px' },
       inset: { '1/2': '50%' },
-      scale: { '70': '.7' },
+      scale: { 70: '.7' },
       zIndex: { '-1': '-1' },
     },
-  },
-  variants: {
-    backgroundColor: ['responsive', 'hover', 'focus', 'hocus', 'group-hocus'],
-    borderColor: ['responsive', 'hover', 'focus', 'hocus', 'focus-within'],
-    content: ['before', 'after'],
-    cursor: ['disabled'],
-    flex: ['responsive', 'before', 'after'],
-    opacity: ['responsive', 'hover', 'focus', 'hocus', 'focus-within', 'group-hocus', 'disabled'],
-    order: ['before', 'after'],
-    textColor: ['responsive', 'hover', 'focus', 'hocus', 'group-hocus'],
-    textDecoration: ['responsive', 'hover', 'focus', 'hocus'],
   },
   plugins: [
     require('tailwindcss-interaction-variants'),

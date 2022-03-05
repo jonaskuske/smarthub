@@ -1,11 +1,13 @@
 <template>
-  <router-link tag="div" :to="`/devices/${device.name}`">
-    <BaseTile :device="device" :status="statusMessage">
-      <IconButton :disabled="isActive || !isOnline" @click="turnOn">
-        <span class="sr-only">Einschalten</span>
-        <PowerOff />
-      </IconButton>
-    </BaseTile>
+  <router-link v-slot="{ navigate }" :to="`/devices/${device.name}`">
+    <div @click="navigate">
+      <BaseTile :device="device" :status="statusMessage">
+        <IconButton :disabled="isActive || !isOnline" @click="turnOn">
+          <span class="sr-only">Einschalten</span>
+          <PowerOff />
+        </IconButton>
+      </BaseTile>
+    </div>
   </router-link>
 </template>
 
@@ -13,7 +15,7 @@
 import IconButton from '../../components/IconButton'
 import BaseTile from './_BaseTile'
 import { emitToController, serverState } from '../../utils'
-import { CONTROLLER_ACTIONS } from '../../../shared/event-types'
+import { CONTROLLER_ACTIONS } from '../../../shared/event-types.mjs'
 
 export default {
   components: { BaseTile, IconButton },

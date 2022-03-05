@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de" class="h-full text-base font-sans">
+<html lang="de" class="h-full font-sans text-base">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -21,7 +21,7 @@
   </head>
 
   <body class="h-full scrollbar-gray-200">
-    <div id="root"></div>
+    <div id="root" class="flex flex-col h-full"></div>
 
     <!-- detect whether browser has a permanently-visible scrollbar -->
     <script>
@@ -32,6 +32,6 @@
       })(document, 'width:100px;height:100px;overflow:scroll;position:absolute;top:-100vh')
     </script>
 
-    <script src="./index.js"></script>
+    <script src="./index.js" type="module"></script>
   </body>
 </html>
