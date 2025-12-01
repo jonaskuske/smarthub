@@ -18,7 +18,7 @@
   "dependencies": {
     "chalk-template": "^0.4.0",
     "connect-history-api-fallback": "^1.6.0",
-    "express": "^5.0.1",
+    "express": "^5.1.0",
     "socket.io": "^4.8.0",
     "web-push": "^3.4.3"
   },
